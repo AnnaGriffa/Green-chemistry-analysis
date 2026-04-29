@@ -1,0 +1,11 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 08e8b92
+_src_path: gh:schwallergroup/copier-liac-minimal
+author_email: elsa.chevalier@epfl.ch
+author_name: Elsa Chevalier
+github_org: Elsachev
+package_name: green_chemistry_analysis
+project_name: green_chemistry_analysis
+short_description: This package allows you to calculate the green chemistry factors
+    for multiple reactions and gives you an analysis of the impact of this reaction
+    on environment.

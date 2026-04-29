@@ -14,3 +14,4 @@ reaction = {
     ]
 }
 
+print(reaction)
