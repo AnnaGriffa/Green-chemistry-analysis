@@ -12,7 +12,3 @@ reaction = {
     "solvent": [
         {"smiles": "O", "coeff": None} 
     ]
-}
-
-print(reaction)
-
