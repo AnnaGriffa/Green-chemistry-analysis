@@ -12,4 +12,3 @@ reaction = {
     "solvent": [
         {"smiles": "O", "coeff": None} 
     ]
-}
