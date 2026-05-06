@@ -1,6 +1,15 @@
 {
-  "name": "Water",
-  "formula": "H2O",
-  "atom_count": 3,
-  "molar_mass": 18.015
+  "name": "",
+  "cid": 0,
+  "formula": "",
+  "atom_count": 0,
+  "molar_mass": 0.0,
+  "molecule_image_path": "",
+  "ghs_pictograms": [
+    {
+      "code": "",
+      "name": "",
+      "image_url": ""
+    }
+  ]
 }
