@@ -13,5 +13,3 @@ reaction = {
         {"smiles": "O", "coeff": None} 
     ]
 }
-
-print(reaction)
