@@ -1,0 +1,15 @@
+{
+    "neutralization": {
+      "reactants": [
+        { "name": "NaOH", "coeff": 1 },
+        { "name": "HCl", "coeff": 1 }
+      ],
+      "products": [
+        { "name": "NaCl", "coeff": 1 },
+        { "name": "H2O", "coeff": 1 }
+      ],
+      "solvent": [
+        { "name": "H2O" }
+      ]
+    }
+  }

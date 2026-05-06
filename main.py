@@ -1,14 +1,14 @@
-from rdkit import Chem
+from data.reactions import load_reactions
+from data.molecules import load_molecules
+from Facteur_E import compute_E_factor
 
-reaction = {
-    "reactants": [
-        {"smiles": "[Na+].[OH-]", "coeff": 1},
-        {"smiles": "Cl", "coeff": 1}
-    ],
-    "products": [
-        {"smiles": "[Na+].[Cl-]", "coeff": 1},
-        {"smiles": "O", "coeff": 1}
-    ],
-    "solvent": [
-        {"smiles": "O", "coeff": None} 
-    ]
+# load data
+reactions = load_reactions()
+molecules = load_molecules()
+
+# pick a reaction
+reaction = reactions["neutralization"]
+
+
+E = compute_E_factor(reaction, molecules)
+print("E-factor:", E)

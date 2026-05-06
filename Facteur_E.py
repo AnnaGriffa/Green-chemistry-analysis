@@ -6,22 +6,22 @@ def load_json(path):
         return json.load(f)
 
 
-def compute_mass(species, data):
+def compute_mass(species_list, molecules_data):
     total = 0
 
-    for sp in species:
-        name = sp["name"]
-        coeff = sp.get("coeff", 1)
+    for sp in species_list:
+        name = sp.name
+        coeff = sp.coeff
 
-        molar_mass = data[name]["molar_mass"]
+        molar_mass = molecules_data[name]["molar_mass"]
         total += coeff * molar_mass
 
     return total
 
 
-def compute_E_factor(reaction, data):
-    react_mass = compute_mass(reaction["reactants"], data)
-    prod_mass = compute_mass(reaction["products"], data)
+def compute_E_factor(reaction, molecules_data):
+    react_mass = compute_mass(reaction.reactants, molecules_data)
+    prod_mass = compute_mass(reaction.products, molecules_data)
 
     waste = react_mass - prod_mass
 
@@ -30,8 +30,8 @@ def compute_E_factor(reaction, data):
 
 # ---- Load files ----
 
-molecule_data = load_json("data/molecule_datas.json")
-reaction = load_json("data/similar.json")
+molecule_data = load_json("data/molecules.json")
+reaction = load_json("data/mreactions.json")
 
 # ---- Compute ----
 
