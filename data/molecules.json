@@ -3,20 +3,44 @@
     "molar_mass": 255.36,
     "ghs_pictograms": ["health"]
   },
+
   "cetirizine": {
     "molar_mass": 388.89,
-    "ghs_pictograms": ["health"]
+    "ghs_pictograms": ["health", "environment"]
   },
+
   "loratadine": {
     "molar_mass": 382.89,
     "ghs_pictograms": []
   },
+
   "ethanol": {
     "molar_mass": 46.07,
     "ghs_pictograms": ["flammable"]
   },
+
   "dichloromethane": {
     "molar_mass": 84.93,
     "ghs_pictograms": ["health", "environment"]
+  },
+
+  "toluene": {
+    "molar_mass": 92.14,
+    "ghs_pictograms": ["flammable", "health"]
+  },
+
+  "sodium_hydroxide": {
+    "molar_mass": 40.00,
+    "ghs_pictograms": ["corrosive"]
+  },
+
+  "hydrochloric_acid": {
+    "molar_mass": 36.46,
+    "ghs_pictograms": ["corrosive"]
+  },
+
+  "water": {
+    "molar_mass": 18.02,
+    "ghs_pictograms": []
   }
 }
