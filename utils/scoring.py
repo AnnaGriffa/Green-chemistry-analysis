@@ -4,7 +4,7 @@ from utils.metrics import atom_economy, e_factor, solvent_toxicity
 def green_score(reaction):
     score = 100
 
-    score -= e_factor(reaction) * 10
+    score -= e_factor(reaction) * 5
     score -= solvent_toxicity(reaction) * 5
     score -= reaction.steps * 3
 

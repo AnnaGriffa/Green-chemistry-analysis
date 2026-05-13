@@ -26,17 +26,20 @@ def total_mass(species_list):
 
 def atom_economy(reaction: Reaction):
     react_mass = total_mass(reaction.reactants)
-    prod_mass = total_mass(reaction.products)
+
+    final_product = reaction.products[-1]
+    prod_mass = species_mass(final_product)
 
     if react_mass == 0:
         return 0
 
     return (prod_mass / react_mass) * 100
 
-
 def e_factor(reaction: Reaction):
     react_mass = total_mass(reaction.reactants)
-    prod_mass = total_mass(reaction.products)
+
+    final_product = reaction.products[-1]
+    prod_mass = species_mass(final_product)
 
     actual_product = prod_mass * reaction.yield_percent / 100
 
