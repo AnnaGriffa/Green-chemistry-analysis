@@ -2,6 +2,7 @@ import streamlit as st
 from data.reactions import load_reactions
 from utils.metrics import e_factor, atom_economy, solvent_toxicity
 from utils.scoring import green_score
+from utils.structures import render_equation
 
 # ── Page config (must be first Streamlit call) ──────────────────────────────────
 st.set_page_config(
@@ -215,7 +216,9 @@ with left_col:
 
     st.markdown("<div style='height:1.2rem'></div>", unsafe_allow_html=True)
 
-    st.markdown(f'<div class="equation-card"><div class="equation-title">Chemical Equation</div><div class="equation-text">{data["equation_html"]}</div></div>', unsafe_allow_html=True)
+    st.markdown("<div class='equation-card'><div class='equation-title'>Chemical Equation</div>", unsafe_allow_html=True)
+    render_equation(reaction)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
 
