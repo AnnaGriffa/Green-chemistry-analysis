@@ -4,7 +4,7 @@ from pathlib import Path
 from data.reactions import Reaction
 
 
-MOLECULE_DATA_PATH = Path("data/molecule_datas.json")
+MOLECULE_DATA_PATH = Path("data/molecules.json")
 
 
 def load_molecule_data():
