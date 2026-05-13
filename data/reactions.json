@@ -1,15 +1,46 @@
 {
-    "neutralization": {
-      "reactants": [
-        { "name": "NaOH", "coeff": 1 },
-        { "name": "HCl", "coeff": 1 }
-      ],
-      "products": [
-        { "name": "NaCl", "coeff": 1 },
-        { "name": "H2O", "coeff": 1 }
-      ],
-      "solvent": [
-        { "name": "H2O" }
-      ]
-    }
+  "Diphenhydramine synthesis": {
+    "reactants": [
+      { "name": "diphenhydramine", "coeff": 1 }
+    ],
+    "products": [
+      { "name": "diphenhydramine", "coeff": 1 }
+    ],
+    "solvents": [
+      { "name": "ethanol", "coeff": 1 }
+    ],
+    "yield_percent": 78,
+    "temperature": 60,
+    "steps": 3
+  },
+
+  "Cetirizine synthesis": {
+    "reactants": [
+      { "name": "cetirizine", "coeff": 1 }
+    ],
+    "products": [
+      { "name": "cetirizine", "coeff": 1 }
+    ],
+    "solvents": [
+      { "name": "dichloromethane", "coeff": 1 }
+    ],
+    "yield_percent": 65,
+    "temperature": 95,
+    "steps": 5
+  },
+
+  "Loratadine synthesis": {
+    "reactants": [
+      { "name": "loratadine", "coeff": 1 }
+    ],
+    "products": [
+      { "name": "loratadine", "coeff": 1 }
+    ],
+    "solvents": [
+      { "name": "ethanol", "coeff": 1 }
+    ],
+    "yield_percent": 82,
+    "temperature": 50,
+    "steps": 4
   }
+}

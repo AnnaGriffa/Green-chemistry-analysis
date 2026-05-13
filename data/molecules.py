@@ -225,8 +225,15 @@ def save_molecule_info_to_json(
     molecule_info: MoleculeInfo,
     output_path: Path = OUTPUT_PATH,
 ) -> None:
+    if output_path.exists():
+        existing = json.loads(output_path.read_text(encoding="utf-8"))
+    else:
+        existing = {}
+
+    existing[molecule_info.name] = asdict(molecule_info)
+
     output_path.write_text(
-        json.dumps(asdict(molecule_info), indent=2, ensure_ascii=False),
+        json.dumps(existing, indent=2, ensure_ascii=False),
         encoding="utf-8",
     )
 

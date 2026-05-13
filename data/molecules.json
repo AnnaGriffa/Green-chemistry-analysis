@@ -1,15 +1,22 @@
 {
-  "name": "",
-  "cid": 0,
-  "formula": "",
-  "atom_count": 0,
-  "molar_mass": 0.0,
-  "molecule_image_path": "",
-  "ghs_pictograms": [
-    {
-      "code": "",
-      "name": "",
-      "image_url": ""
-    }
-  ]
+  "diphenhydramine": {
+    "molar_mass": 255.36,
+    "ghs_pictograms": ["health"]
+  },
+  "cetirizine": {
+    "molar_mass": 388.89,
+    "ghs_pictograms": ["health"]
+  },
+  "loratadine": {
+    "molar_mass": 382.89,
+    "ghs_pictograms": []
+  },
+  "ethanol": {
+    "molar_mass": 46.07,
+    "ghs_pictograms": ["flammable"]
+  },
+  "dichloromethane": {
+    "molar_mass": 84.93,
+    "ghs_pictograms": ["health", "environment"]
+  }
 }

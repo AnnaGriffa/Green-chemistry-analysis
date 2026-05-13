@@ -1,4 +1,7 @@
 import streamlit as st
+from data.reactions import load_reactions
+from utils.metrics import e_factor, atom_economy, solvent_toxicity
+from utils.scoring import green_score
 
 # ── Page config (must be first Streamlit call) ──────────────────────────────────
 st.set_page_config(
@@ -94,98 +97,7 @@ html, body, [class*="css"] {
 """, unsafe_allow_html=True)
 
 # ── Data ────────────────────────────────────────────────────────────────────────
-REACTIONS = {
-    "Aspirin Synthesis": {
-        "equation_html": (
-            '<span class="eq-reactant">Salicylic acid</span>'
-            ' <span class="eq-plus">+</span> '
-            '<span class="eq-reactant">Acetic anhydride</span>'
-            ' <span class="eq-arrow">→</span> '
-            '<span class="eq-product">Aspirin</span>'
-            ' <span class="eq-plus">+</span> '
-            '<span class="eq-byproduct">Acetic acid</span>'
-        ),
-        "efactor": {"value": 6.4, "comment": "Moderate waste per kg product", "badge": "ok", "badge_text": "Moderate"},
-        "pmi":     {"value": 7.4, "comment": "Relatively efficient mass use",  "badge": "ok", "badge_text": "Acceptable"},
-        "hazards": {
-            "value": 3, "comment": "Low overall hazard profile", "badge": "good", "badge_text": "Low risk",
-            "list": [
-                {"code": "H302", "label": "Harmful if swallowed"},
-                {"code": "H318", "label": "Serious eye damage"},
-                {"code": "H332", "label": "Harmful if inhaled"},
-            ]
-        },
-        "principles": [1, 2, 5],
-    },
-    "Fischer Esterification": {
-        "equation_html": (
-            '<span class="eq-reactant">Carboxylic acid</span>'
-            ' <span class="eq-plus">+</span> '
-            '<span class="eq-reactant">Alcohol</span>'
-            ' <span class="eq-arrow">⇌</span> '
-            '<span class="eq-product">Ester</span>'
-            ' <span class="eq-plus">+</span> '
-            '<span class="eq-byproduct">H₂O</span>'
-        ),
-        "efactor": {"value": 12.1, "comment": "Excess alcohol needed; high waste", "badge": "warn", "badge_text": "High"},
-        "pmi":     {"value": 14.3, "comment": "Poor mass efficiency overall",       "badge": "warn", "badge_text": "Poor"},
-        "hazards": {
-            "value": 5, "comment": "Acid catalyst, flammable solvents", "badge": "ok", "badge_text": "Moderate",
-            "list": [
-                {"code": "H226", "label": "Flammable liquid"},
-                {"code": "H314", "label": "Causes skin burns"},
-                {"code": "H335", "label": "May cause respiratory irritation"},
-                {"code": "H290", "label": "Corrosive to metals"},
-            ]
-        },
-        "principles": [0, 4, 9],
-    },
-    "Grignard Reaction": {
-        "equation_html": (
-            '<span class="eq-reactant">R-X + Mg</span>'
-            ' <span class="eq-arrow">→</span> '
-            '<span class="eq-reactant">R-MgX</span>'
-            ' <span class="eq-arrow">→</span> '
-            '<span class="eq-product">R-OH</span>'
-            ' <span class="eq-plus">+</span> '
-            '<span class="eq-byproduct">MgX(OH)</span>'
-        ),
-        "efactor": {"value": 35.0, "comment": "Very high solvent waste (Et₂O)",   "badge": "warn", "badge_text": "Very high"},
-        "pmi":     {"value": 42.0, "comment": "Anhydrous conditions add burden",   "badge": "warn", "badge_text": "Poor"},
-        "hazards": {
-            "value": 8, "comment": "Pyrophoric Mg, flammable solvents", "badge": "warn", "badge_text": "High risk",
-            "list": [
-                {"code": "H250", "label": "Catches fire spontaneously (Mg)"},
-                {"code": "H224", "label": "Extremely flammable liquid (Et₂O)"},
-                {"code": "H260", "label": "Reacts violently with water"},
-                {"code": "H315", "label": "Causes skin irritation"},
-                {"code": "H336", "label": "May cause drowsiness"},
-            ]
-        },
-        "principles": [4, 7, 11],
-    },
-    "Diels-Alder Cycloaddition": {
-        "equation_html": (
-            '<span class="eq-reactant">Diene</span>'
-            ' <span class="eq-plus">+</span> '
-            '<span class="eq-reactant">Dienophile</span>'
-            ' <span class="eq-arrow">→</span> '
-            '<span class="eq-product">Cyclohexene adduct</span>'
-        ),
-        "efactor": {"value": 2.1, "comment": "Excellent atom economy, no byproduct", "badge": "good", "badge_text": "Excellent"},
-        "pmi":     {"value": 3.0, "comment": "Highly efficient reaction",             "badge": "good", "badge_text": "Excellent"},
-        "hazards": {
-            "value": 4, "comment": "Moderate — some reagents reactive", "badge": "ok", "badge_text": "Moderate",
-            "list": [
-                {"code": "H302", "label": "Harmful if swallowed"},
-                {"code": "H312", "label": "Harmful in contact with skin"},
-                {"code": "H332", "label": "Harmful if inhaled"},
-                {"code": "H319", "label": "Causes serious eye irritation"},
-            ]
-        },
-        "principles": [1, 4, 8],
-    },
-}
+REACTIONS = load_reactions()
 
 PRINCIPLES = [
     "Prevention of waste",
@@ -248,7 +160,33 @@ if st.session_state.page == "home":
 # ANALYSIS SCREEN
 # ══════════════════════════════════════════════════════════════════════════════
 selected = st.session_state.selected_reaction
-data = REACTIONS[selected]
+reaction = REACTIONS[selected]
+
+data = {
+    "efactor": {
+        "value": round(e_factor(reaction), 2),
+        "comment": "Waste generated per unit product",
+        "badge": "good" if e_factor(reaction) < 5 else "ok" if e_factor(reaction) < 15 else "warn",
+        "badge_text": "Excellent" if e_factor(reaction) < 5 else "Moderate" if e_factor(reaction) < 15 else "Poor"
+    },
+
+    "pmi": {
+        "value": round(atom_economy(reaction), 2),
+        "comment": "Mass efficiency indicator",
+        "badge": "good" if atom_economy(reaction) > 70 else "ok" if atom_economy(reaction) > 40 else "warn",
+        "badge_text": "Excellent" if atom_economy(reaction) > 70 else "Moderate" if atom_economy(reaction) > 40 else "Poor"
+    },
+
+    "hazards": {
+        "value": round(solvent_toxicity(reaction), 1),
+        "comment": "Solvent hazard profile",
+        "badge": "good" if solvent_toxicity(reaction) < 1 else "ok" if solvent_toxicity(reaction) < 3 else "warn",
+        "badge_text": "Low" if solvent_toxicity(reaction) < 1 else "Moderate" if solvent_toxicity(reaction) < 3 else "High",
+        "list": []
+    },
+
+    "principles": [0, 1, 4, 5]
+}
 
 # Header
 st.markdown('<div class="main-title">Green Chemistry <span class="title-accent">Analysis</span></div>', unsafe_allow_html=True)
