@@ -26,22 +26,19 @@ def total_mass(species_list):
 
 def atom_economy(reaction: Reaction):
     react_mass = total_mass(reaction.reactants)
-
-    final_product = reaction.products[-1]
-    prod_mass = species_mass(final_product)
+    product_mass = total_mass(reaction.products)
 
     if react_mass == 0:
         return 0
 
-    return (prod_mass / react_mass) * 100
+    return (product_mass / react_mass) * 100
+
 
 def e_factor(reaction: Reaction):
     react_mass = total_mass(reaction.reactants)
+    product_mass = total_mass(reaction.products)
 
-    final_product = reaction.products[-1]
-    prod_mass = species_mass(final_product)
-
-    actual_product = prod_mass * reaction.yield_percent / 100
+    actual_product = product_mass * (reaction.yield_percent / 100)
 
     if actual_product == 0:
         return float("inf")
@@ -56,8 +53,12 @@ def solvent_toxicity(reaction: Reaction):
 
     total = 0
 
-    for sp in reaction.solvents:
-        pictograms = MOLECULES[sp.name]["ghs_pictograms"]
+    for solvent in reaction.solvents:
+        pictograms = MOLECULES[solvent.name]["ghs_pictograms"]
         total += len(pictograms)
 
     return total / len(reaction.solvents)
+
+
+def intermediate_complexity(reaction: Reaction):
+    return len(reaction.intermediates)

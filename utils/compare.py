@@ -8,10 +8,12 @@ def rank_reactions():
     ranking = []
 
     for reaction in reactions.values():
-        ranking.append({
-            "name": reaction.name,
-            "score": green_score(reaction),
-        })
+        ranking.append(
+            {
+                "name": reaction.name,
+                "score": green_score(reaction),
+            }
+        )
 
     ranking.sort(key=lambda x: x["score"], reverse=True)
 

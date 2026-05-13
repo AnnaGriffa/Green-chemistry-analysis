@@ -18,6 +18,7 @@ class Species:
 class Reaction:
     name: str
     reactants: list[Species]
+    intermediates: list[Species]
     products: list[Species]
     solvents: list[Species]
     yield_percent: float
@@ -35,6 +36,7 @@ def load_reactions(path: Path = INPUT_PATH) -> dict[str, Reaction]:
         reactions[name] = Reaction(
             name=name,
             reactants=[Species(**sp) for sp in r["reactants"]],
+            intermediates=[Species(**sp) for sp in r.get("intermediates", [])],
             products=[Species(**sp) for sp in r["products"]],
             solvents=[Species(**sp) for sp in r.get("solvents", [])],
             yield_percent=r["yield_percent"],
