@@ -1,15 +1,55 @@
 {
-    "neutralization": {
-      "reactants": [
-        { "name": "NaOH", "coeff": 1 },
-        { "name": "HCl", "coeff": 1 }
-      ],
-      "products": [
-        { "name": "NaCl", "coeff": 1 },
-        { "name": "H2O", "coeff": 1 }
-      ],
-      "solvent": [
-        { "name": "H2O" }
-      ]
-    }
+  "Diphenhydramine synthesis": {
+    "reactants": [
+      { "name": "benzhydrol", "coeff": 1 },
+      { "name": "hydrochloric_acid", "coeff": 1 },
+      { "name": "dimethylaminoethanol", "coeff": 1 }
+    ],
+    "products": [
+      { "name": "chlorodiphenylmethane", "coeff": 1 },
+      { "name": "diphenhydramine", "coeff": 1 }
+    ],
+    "solvents": [
+      { "name": "ethanol", "coeff": 1 }
+    ],
+    "yield_percent": 78,
+    "temperature": 60,
+    "steps": 2
+  },
+
+  "Cetirizine synthesis": {
+    "reactants": [
+      { "name": "4-chlorobenzhydryl_chloride", "coeff": 1 },
+      { "name": "n-carbethoxy_piperazine", "coeff": 1 },
+      { "name": "methyl_2-(2-chloroethoxy)acetate", "coeff": 1 }
+    ],
+    "products": [
+      { "name": "ethyl_4-(4-chlorobenzhydryl)piperazine-1-carboxylate", "coeff": 1 },
+      { "name": "cetirizine", "coeff": 1 }
+    ],
+    "solvents": [
+      { "name": "dichloromethane", "coeff": 1 },
+      { "name": "toluene", "coeff": 1 }
+    ],
+    "yield_percent": 65,
+    "temperature": 95,
+    "steps": 4
+  },
+
+  "Loratadine synthesis": {
+    "reactants": [
+      { "name": "2-(4-chlorobenzyl)acetonitrile", "coeff": 1 },
+      { "name": "ethyl_nicotinate", "coeff": 1 }
+    ],
+    "products": [
+      { "name": "loratadine_intermediate", "coeff": 1 },
+      { "name": "loratadine", "coeff": 1 }
+    ],
+    "solvents": [
+      { "name": "ethanol", "coeff": 1 }
+    ],
+    "yield_percent": 82,
+    "temperature": 70,
+    "steps": 3
   }
+}
