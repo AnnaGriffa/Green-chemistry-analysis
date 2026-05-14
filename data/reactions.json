@@ -53,7 +53,7 @@
 
   "Loratadine synthesis": {
     "reactants": [
-      { "name": "2-(4-chlorobenzyl)acetonitrile", "coeff": 1 },
+      { "name": "2-(3-chlorophenyl)acetonitrile", "coeff": 1 },
       { "name": "ethyl_nicotinate", "coeff": 1 }
     ],
 
