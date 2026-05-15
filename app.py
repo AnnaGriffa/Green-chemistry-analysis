@@ -4,20 +4,22 @@ from utils.metrics import e_factor, atom_economy, solvent_toxicity
 from utils.scoring import green_score
 from utils.structures import render_equation
 
-# ── Page config (must be first Streamlit call) ──────────────────────────────────
+# ── Page config ─────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Green Chemistry Analysis",
     page_icon="🌿",
     layout="wide",
 )
 
-# ── Session state ───────────────────────────────────────────────────────────────
+# ── Session state ────────────────────────────────────────────────────────────────
 if "page" not in st.session_state:
     st.session_state.page = "home"
-if "selected_reaction" not in st.session_state:
-    st.session_state.selected_reaction = "Aspirin Synthesis"
+if "selected_reaction_1" not in st.session_state:
+    st.session_state.selected_reaction_1 = None
+if "selected_reaction_2" not in st.session_state:
+    st.session_state.selected_reaction_2 = None
 
-# ── Custom CSS ──────────────────────────────────────────────────────────────────
+# ── Custom CSS ───────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -32,15 +34,7 @@ html, body, [class*="css"] {
 #MainMenu, footer, header { visibility: hidden; }
 
 /* HOME */
-.home-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 72vh;
-    text-align: center;
-    padding: 2rem 1rem;
-}
+.home-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 72vh; text-align: center; padding: 2rem 1rem; }
 .home-icon { font-size: 4rem; margin-bottom: 1.2rem; filter: drop-shadow(0 0 24px rgba(63,185,80,0.4)); }
 .home-title { font-size: 3.4rem; font-weight: 800; color: #ffffff; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 0.8rem; }
 .home-accent { color: #3fb950; }
@@ -80,14 +74,9 @@ html, body, [class*="css"] {
 .principle-highlighted { color: #7ee8a2; font-weight: 600; }
 
 /* Equation */
-.equation-card { background: #2e6d7d; border: 1px solid #1e5c6e; border-radius: 16px; padding: 1.8rem 2rem; text-align: center; font-family: 'JetBrains Mono', monospace; }
-.equation-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: #0d2c54; margin-bottom: 1rem; font-weight: 600; }
-.equation-text { font-size: 1.4rem; color: #0d2c54; letter-spacing: 0.03em; white-space: nowrap; overflow-x: auto; }
-.eq-reactant  { color: #79c0ff; font-weight: 600; }
-.eq-product   { color: #7ee8a2; font-weight: 600; }
-.eq-byproduct { color: #ffa657; font-weight: 600; }
-.eq-arrow     { color: #0d2c54; margin: 0 0.5rem; }
-.eq-plus      { color: #0d2c54; margin: 0 0.4rem; }
+.equation-card { background: #2e6d7d; border: 1px solid #1e5c6e; border-radius: 16px; padding: 1.8rem 2rem 2rem; font-family: 'JetBrains Mono', monospace; }
+.equation-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: #d0eef5; margin-bottom: 1.2rem; font-weight: 600; text-align: center; }
+.equation-inner { background: #ffffff; border-radius: 12px; padding: 1.2rem 1rem; }
 
 /* Buttons */
 .stButton > button { background: linear-gradient(135deg, #238636, #1a6e2e) !important; color: white !important; border: 1px solid #2ea043 !important; border-radius: 10px !important; font-family: 'Sora', sans-serif !important; font-weight: 700 !important; font-size: 0.9rem !important; padding: 0.6rem 1.6rem !important; letter-spacing: 0.03em !important; transition: all 0.2s ease !important; }
@@ -97,7 +86,7 @@ html, body, [class*="css"] {
 </style>
 """, unsafe_allow_html=True)
 
-# ── Data ────────────────────────────────────────────────────────────────────────
+# ── Data ─────────────────────────────────────────────────────────────────────────
 REACTIONS = load_reactions()
 
 PRINCIPLES = [
@@ -121,6 +110,104 @@ FOOTER = """
 </div>
 """
 
+# ── Fonctions utilitaires ─────────────────────────────────────────────────────────
+
+def render_metric(col, css_class, label, metric_data):
+    """Affiche une carte métrique (E-Factor, PMI ou Hazards)."""
+    with col:
+        hazard_html = ""
+        if "list" in metric_data and metric_data["list"]:
+            items = "".join(
+                f'<div class="hazard-item"><span class="hazard-code">{h["code"]}</span>{h["label"]}</div>'
+                for h in metric_data["list"]
+            )
+            hazard_html = f'<div class="hazard-list">{items}</div>'
+        st.markdown(
+            f'<div class="metric-card {css_class}">'
+            f'<div class="metric-label">{label}</div>'
+            f'<div class="metric-value">{metric_data["value"]}</div>'
+            f'<div class="metric-comment">{metric_data["comment"]}</div>'
+            f'<div class="metric-badge badge-{metric_data["badge"]}">{metric_data["badge_text"]}</div>'
+            f'{hazard_html}</div>',
+            unsafe_allow_html=True
+        )
+
+def build_data(reaction):
+    """Construit le dictionnaire de données d'affichage pour une réaction."""
+    ef  = e_factor(reaction)
+    ae  = atom_economy(reaction)
+    st_ = solvent_toxicity(reaction)
+    return {
+        "efactor": {
+            "value":      round(ef, 2),
+            "comment":    "Waste generated per unit product",
+            "badge":      "good" if ef < 5 else "ok" if ef < 15 else "warn",
+            "badge_text": "Excellent" if ef < 5 else "Moderate" if ef < 15 else "Poor",
+        },
+        "pmi": {
+            "value":      round(ae, 2),
+            "comment":    "Mass efficiency indicator",
+            "badge":      "good" if ae > 70 else "ok" if ae > 40 else "warn",
+            "badge_text": "Excellent" if ae > 70 else "Moderate" if ae > 40 else "Poor",
+        },
+        "hazards": {
+            "value":      round(st_, 1),
+            "comment":    "Solvent hazard profile",
+            "badge":      "good" if st_ < 1 else "ok" if st_ < 3 else "warn",
+            "badge_text": "Low" if st_ < 1 else "Moderate" if st_ < 3 else "High",
+            "list":       [],
+        },
+        "principles": getattr(reaction, "principles", [0, 1, 4, 5]),
+    }
+
+def render_principles(data):
+    """Affiche le bloc des 12 principes."""
+    highlighted = set(data["principles"])
+    items_html = ""
+    for i, p in enumerate(PRINCIPLES):
+        css = "principle-highlighted" if i in highlighted else ""
+        dot = "✔️" if i in highlighted else "•"
+        items_html += f'<div class="principle-item"><span class="principle-num">{i+1:02d}</span><span class="{css}">{dot} {p}</span></div>'
+    st.markdown(
+        f'<div class="principles-card">'
+        f'<div class="principles-title">📋 12 Principles of Green Chemistry</div>'
+        f'{items_html}</div>',
+        unsafe_allow_html=True
+    )
+
+def render_reaction_column(col, reaction, data, label_color):
+    """Affiche une colonne complète d'analyse pour une réaction."""
+    with col:
+        st.markdown(
+            f"<div class='selection-banner' style='border-color:{label_color};color:{label_color};'>"
+            f"🔬 {reaction.name}</div>",
+            unsafe_allow_html=True
+        )
+        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
+
+        # Métriques
+        mc1, mc2, mc3 = st.columns(3)
+        render_metric(mc1, "efactor", "E-Factor", data["efactor"])
+        render_metric(mc2, "pmi",     "PMI",      data["pmi"])
+        render_metric(mc3, "hazards", "Hazards",  data["hazards"])
+
+        st.markdown("<div style='height:1.2rem'></div>", unsafe_allow_html=True)
+
+        # Equation
+        st.markdown(
+            "<div class='equation-card'>"
+            "<div class='equation-title'>Chemical Equation</div>"
+            "<div class='equation-inner'>",
+            unsafe_allow_html=True
+        )
+        render_equation(reaction)
+        st.markdown("</div></div>", unsafe_allow_html=True)
+
+        st.markdown("<div style='height:1.2rem'></div>", unsafe_allow_html=True)
+
+        # Principes
+        render_principles(data)
+
 # ══════════════════════════════════════════════════════════════════════════════
 # HOME SCREEN
 # ══════════════════════════════════════════════════════════════════════════════
@@ -132,24 +219,45 @@ if st.session_state.page == "home":
         <div class="home-title">Green Chemistry<br><span class="home-accent">Analysis Tool</span></div>
         <div class="home-divider"></div>
         <div class="home-subtitle">
-            Evaluate chemical reactions against the 12 principles of green chemistry.
-            Select a reaction below and press <span style="color:#e6edf3;">Analyze</span> to get started.
+            Select two reactions to compare their green chemistry profiles side by side.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     _, col_center, _ = st.columns([1.2, 2, 1.2])
     with col_center:
-        st.markdown('<div class="home-select-label">Select a reaction</div>', unsafe_allow_html=True)
-        choice = st.selectbox(
-            "reaction",
-            list(REACTIONS.keys()),
+        reaction_names = list(REACTIONS.keys())
+
+        st.markdown('<div class="home-select-label">First reaction</div>', unsafe_allow_html=True)
+        choice_1 = st.selectbox(
+            "reaction1", reaction_names,
+            index=0,
             label_visibility="collapsed",
-            key="home_select",
+            key="home_select_1",
         )
-        st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
-        if st.button("Analyze", use_container_width=True):
-            st.session_state.selected_reaction = choice
+
+        st.markdown("<div style='height:0.8rem'></div>", unsafe_allow_html=True)
+
+        st.markdown('<div class="home-select-label">Second reaction</div>', unsafe_allow_html=True)
+        choice_2 = st.selectbox(
+            "reaction2", reaction_names,
+            index=1 if len(reaction_names) > 1 else 0,
+            label_visibility="collapsed",
+            key="home_select_2",
+        )
+
+        st.markdown("<div style='height:0.8rem'></div>", unsafe_allow_html=True)
+
+        if choice_1 == choice_2:
+            st.markdown(
+                "<div style='color:#f85149;font-size:0.8rem;text-align:center;'>"
+                "⚠️ Please select two different reactions.</div>",
+                unsafe_allow_html=True
+            )
+
+        if st.button("🔬 Compare Reactions", use_container_width=True, disabled=(choice_1 == choice_2)):
+            st.session_state.selected_reaction_1 = choice_1
+            st.session_state.selected_reaction_2 = choice_2
             st.session_state.page = "analysis"
             st.rerun()
 
@@ -160,81 +268,36 @@ if st.session_state.page == "home":
 # ══════════════════════════════════════════════════════════════════════════════
 # ANALYSIS SCREEN
 # ══════════════════════════════════════════════════════════════════════════════
-selected = st.session_state.selected_reaction
-reaction = REACTIONS[selected]
+reaction_1 = REACTIONS[st.session_state.selected_reaction_1]
+reaction_2 = REACTIONS[st.session_state.selected_reaction_2]
 
-data = {
-    "efactor": {
-        "value": round(e_factor(reaction), 2),
-        "comment": "Waste generated per unit product",
-        "badge": "good" if e_factor(reaction) < 5 else "ok" if e_factor(reaction) < 15 else "warn",
-        "badge_text": "Excellent" if e_factor(reaction) < 5 else "Moderate" if e_factor(reaction) < 15 else "Poor"
-    },
-
-    "pmi": {
-        "value": round(atom_economy(reaction), 2),
-        "comment": "Mass efficiency indicator",
-        "badge": "good" if atom_economy(reaction) > 70 else "ok" if atom_economy(reaction) > 40 else "warn",
-        "badge_text": "Excellent" if atom_economy(reaction) > 70 else "Moderate" if atom_economy(reaction) > 40 else "Poor"
-    },
-
-    "hazards": {
-        "value": round(solvent_toxicity(reaction), 1),
-        "comment": "Solvent hazard profile",
-        "badge": "good" if solvent_toxicity(reaction) < 1 else "ok" if solvent_toxicity(reaction) < 3 else "warn",
-        "badge_text": "Low" if solvent_toxicity(reaction) < 1 else "Moderate" if solvent_toxicity(reaction) < 3 else "High",
-        "list": []
-    },
-
-    "principles": [0, 1, 4, 5]
-}
+data_1 = build_data(reaction_1)
+data_2 = build_data(reaction_2)
 
 # Header
-st.markdown('<div class="main-title">Green Chemistry <span class="title-accent">Analysis</span></div>', unsafe_allow_html=True)
-st.markdown("<p style='color:#0b4021;font-size:0.85rem;margin-top:0.3rem;'>Evaluate chemical reactions against green chemistry principles</p>", unsafe_allow_html=True)
+st.markdown('<div class="main-title">Green Chemistry <span class="title-accent">Comparison</span></div>', unsafe_allow_html=True)
+st.markdown("<p style='color:#6e7681;font-size:0.85rem;margin-top:0.3rem;'>Side-by-side green chemistry analysis</p>", unsafe_allow_html=True)
 st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
-st.markdown(f'<div class="selection-banner"> You selected : {selected}</div>', unsafe_allow_html=True)
-st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
 
-# Main layout
-left_col, right_col = st.columns([1, 1.5], gap="large")
+# Deux colonnes côte à côte
+col_left, col_divider, col_right = st.columns([10, 0.3, 10], gap="small")
 
-with left_col:
-    mc1, mc2, mc3 = st.columns(3)
+render_reaction_column(col_left,  reaction_1, data_1, "#79c0ff")
 
-    def render_metric(col, css_class, label, metric_data):
-        with col:
-            hazard_html = ""
-            if "list" in metric_data:
-                items = "".join(f'<div class="hazard-item"><span class="hazard-code">{h["code"]}</span>{h["label"]}</div>' for h in metric_data["list"])
-                hazard_html = f'<div class="hazard-list">{items}</div>'
-            st.markdown(f'<div class="metric-card {css_class}"><div class="metric-label">{label}</div><div class="metric-value">{metric_data["value"]}</div><div class="metric-comment">{metric_data["comment"]}</div><div class="metric-badge badge-{metric_data["badge"]}">{metric_data["badge_text"]}</div>{hazard_html}</div>', unsafe_allow_html=True)
+with col_divider:
+    st.markdown(
+        "<div style='border-left:1px solid #21262d;height:100%;min-height:800px;margin:auto;width:1px;'></div>",
+        unsafe_allow_html=True
+    )
 
-    render_metric(mc1, "efactor", "E-Factor", data["efactor"])
-    render_metric(mc2, "pmi",     "PMI",      data["pmi"])
-    render_metric(mc3, "hazards", "Hazards",  data["hazards"])
-
-    st.markdown("<div style='height:1.2rem'></div>", unsafe_allow_html=True)
-
-    st.markdown("<div class='equation-card'><div class='equation-title'>Chemical Equation</div>", unsafe_allow_html=True)
-    render_equation(reaction)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
-
-    if st.button("⟳ Analyze Another Reaction"):
-        st.session_state.page = "home"
-        st.rerun()
-
-with right_col:
-    highlighted = set(data["principles"])
-    items_html = ""
-    for i, p in enumerate(PRINCIPLES):
-        css = "principle-highlighted" if i in highlighted else ""
-        dot = "✔️" if i in highlighted else "•  "
-        items_html += f'<div class="principle-item"><span class="principle-num">{i+1:02d}</span><span class="{css}">{dot} {p}</span></div>'
-
-    st.markdown(f'<div class="principles-card"><div class="principles-title">📋 12 Principles of Green Chemistry</div>{items_html}</div>', unsafe_allow_html=True)
+render_reaction_column(col_right, reaction_2, data_2, "#7ee8a2")
 
 st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
+st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
+
+if st.button("🔄  Compare Another Pair"):
+    st.session_state.page = "home"
+    st.rerun()
+
+st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
 st.markdown(FOOTER, unsafe_allow_html=True)
