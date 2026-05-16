@@ -28,7 +28,7 @@ PUBCHEM_NAMES: dict[str, str] = {
 
 
 KNOWN_CIDS: dict[str, int] = {
-    "benzhydrol":                                           91526,
+    "benzhydrol":                                           7037,
     "hydrochloric_acid":                                    313,
     "chlorodiphenylmethane":                                11756,
     "dimethylaminoethanol":                                 7767,
