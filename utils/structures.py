@@ -4,49 +4,184 @@ import streamlit as st
 import pubchempy as pcp
 
 # ── Names used in the code → PubChem names ─────────────────────────────────────
-PUBCHEM_NAMES: dict[str, str] = {
-    "benzhydrol":                                           "benzhydrol",
-    "hydrochloric_acid":                                    "hydrochloric acid",
-    "chlorodiphenylmethane":                                "chlorodiphenylmethane",
-    "dimethylaminoethanol":                                 "2-dimethylaminoethanol",
-    "diphenhydramine":                                      "diphenhydramine",
-    "4-chlorobenzhydryl_chloride":                          "4-chlorobenzhydryl chloride",
-    "n-carbethoxy_piperazine":                              "ethyl piperazine-1-carboxylate",
-    "ethyl_4-(4-chlorobenzhydryl)piperazine-1-carboxylate": "ethyl 4-(4-chlorobenzhydryl)piperazine-1-carboxylate",
-    "methyl_2-(2-chloroethoxy)acetate":                     "methyl 2-(2-chloroethoxy)acetate",
-    "cetirizine":                                           "cetirizine",
-    "2-(3-chlorophenyl)acetonitrile":                           "2-(3-chlorophenyl)acetonitrile",
-    "ethyl_nicotinate":                                     "ethyl_nicotinate",
-    "loratadine_intermediate":                              "8-chloro-6,11-dihydro-5H-benzo[5,6]cyclohepta[1,2-b]pyridin-11-one",
-    "loratadine":                                           "loratadine",
-    "ethanol":                                              "ethanol",
-    "dichloromethane":                                      "dichloromethane",
-    "toluene":                                              "toluene",
-    "sodium_hydroxide":                                     "sodium hydroxide",
-    "water":                                                "water",
-}
 
+PUBCHEM_NAMES: dict[str, str] = {
+    # Diphenhydramine
+    "benzhydrol": "benzhydrol",
+    "hydrochloric_acid": "hydrochloric acid",
+    "dimethylaminoethanol": "2-dimethylaminoethanol",
+    "diphenhydramine": "diphenhydramine",
+
+    # Cetirizine
+    "4-chlorobenzhydryl_chloride": "4-chlorobenzhydryl chloride",
+    "n-carbethoxy_piperazine": "ethyl piperazine-1-carboxylate",
+    "methyl_2-(2-chloroethoxy)acetate": "methyl 2-(2-chloroethoxy)acetate",
+    "cetirizine": "cetirizine",
+
+    # Loratadine
+    "2-(4-chlorobenzyl)acetonitrile": "2-(4-chlorobenzyl)acetonitrile",
+    "ethyl_nicotinate": "ethyl nicotinate",
+    "loratadine": "loratadine",
+
+    # Brompheniramine
+    "2-bromopyridine": "2-bromopyridine",
+    "4-bromobenzyl_bromide": "4-bromobenzyl bromide",
+    "dimethylaminoethyl_chloride": "2-chloro-N,N-dimethylethylamine",
+    "brompheniramine": "brompheniramine",
+
+    # Chlorpheniramine
+    "4-chlorophenylacetonitrile": "4-chlorophenylacetonitrile",
+    "2-chloropyridine": "2-chloropyridine",
+    "chlorpheniramine": "chlorpheniramine",
+
+    # Carbinoxamine
+    "pyridine": "pyridine",
+    "dimethylaminoethyl_chloride_hcl": "2-dimethylaminoethyl chloride hydrochloride",
+    "carbinoxamine": "carbinoxamine",
+
+    # Triprolidine
+    "4-methylbenzophenone": "4-methylbenzophenone",
+    "formaldehyde": "formaldehyde",
+    "pyrrolidine": "pyrrolidine",
+    "triprolidine": "triprolidine",
+
+    # Doxylamine
+    "methylbenzyl_ketone": "1-phenyl-2-propanone",
+    "doxylamine": "doxylamine",
+
+    # Promethazine
+    "phenothiazine": "phenothiazine",
+    "dimethylaminopropyl_chloride": "3-dimethylaminopropyl chloride",
+    "promethazine": "promethazine",
+
+    # Cyclizine
+    "n-methyl_piperazine": "1-methylpiperazine",
+    "cyclizine": "cyclizine",
+
+    # Hydroxyzine
+    "hydroxyzine_precursor": "cetirizine",
+    "2-(2-chloroethoxy)ethanol": "2-(2-chloroethoxy)ethanol",
+    "hydroxyzine": "hydroxyzine",
+
+    # Dimenhydrinate
+    "diphenhydramine_salt_partner": "8-chlorotheophylline",
+    "dimenhydrinate": "dimenhydrinate",
+
+    # Desloratadine
+    "desloratadine_precursor": "loratadine",
+    "methanol": "methanol",
+    "desloratadine": "desloratadine",
+
+    # Meclizine
+    "meclizine_precursor": "piperazine",
+    "m_tolualdehyde": "m-tolualdehyde",
+    "meclizine": "meclizine",
+
+    # Fexofenadine
+    "fexofenadine_intermediate_1": "4-bromobutyrophenone",
+    "azacyclonol": "azacyclonol",
+    "fexofenadine": "fexofenadine",
+
+    # Levocetirizine
+    "levocetirizine": "levocetirizine",
+
+    # Rupatadine
+    "desloratadine_acid": "desloratadine",
+    "rupatadine_precursor": "rupatadine",
+    "rupatadine": "rupatadine",
+
+    # Solvents
+    "ethanol": "ethanol",
+    "dichloromethane": "dichloromethane",
+    "toluene": "toluene",
+    "water": "water",
+}
 
 KNOWN_CIDS: dict[str, int] = {
-    "benzhydrol":                                           7037,
-    "hydrochloric_acid":                                    313,
-    "chlorodiphenylmethane":                                11756,
-    "dimethylaminoethanol":                                 7767,
-    "diphenhydramine":                                      3989,
-    "4-chlorobenzhydryl_chloride":                          12673,
-    "n-carbethoxy_piperazine":                              68141,
-    "ethyl_4-(4-chlorobenzhydryl)piperazine-1-carboxylate": 2723949,
-    "methyl_2-(2-chloroethoxy)acetate":                     522258,
-    "cetirizine":                                           2678,
-    "2-(3-chlorophenyl)acetonitrile":                       73722,
-    "ethyl_nicotinate":                                     69188,
-    "loratadine":                                           3957,
-    "ethanol":                                              702,
-    "dichloromethane":                                      6344,
-    "toluene":                                              1140,
-    "sodium_hydroxide":                                     14798,
-    "water":                                                962,
+    # Diphenhydramine
+    "benzhydrol": 7037,
+    "hydrochloric_acid": 313,
+    "dimethylaminoethanol": 7767,
+    "diphenhydramine": 3989,
+
+    # Cetirizine
+    "4-chlorobenzhydryl_chloride": 12673,
+    "n-carbethoxy_piperazine": 68141,
+    "methyl_2-(2-chloroethoxy)acetate": 522258,
+    "cetirizine": 2678,
+
+    # Loratadine
+    "2-(4-chlorobenzyl)acetonitrile": 73722,
+    "ethyl_nicotinate": 69188,
+    "loratadine": 3957,
+
+    # Brompheniramine
+    "2-bromopyridine": 7969,
+    "4-bromobenzyl_bromide": 78017,
+    "dimethylaminoethyl_chloride": 10966,
+    "brompheniramine": 2559,
+
+    # Chlorpheniramine
+    "4-chlorophenylacetonitrile": 22172,
+    "2-chloropyridine": 11254,
+    "chlorpheniramine": 2725,
+
+    # Carbinoxamine
+    "pyridine": 1049,
+    "dimethylaminoethyl_chloride_hcl": 13840,
+    "carbinoxamine": 2745,
+
+    # Triprolidine
+    "4-methylbenzophenone": 7408,
+    "formaldehyde": 712,
+    "pyrrolidine": 31268,
+    "triprolidine": 5568,
+
+    # Doxylamine
+    "methylbenzyl_ketone": 7678,
+    "doxylamine": 8113,
+
+    # Promethazine
+    "phenothiazine": 4760,
+    "dimethylaminopropyl_chloride": 17156,
+    "promethazine": 4927,
+
+    # Cyclizine
+    "n-methyl_piperazine": 6329,
+    "cyclizine": 6726,
+
+    # Hydroxyzine
+    "2-(2-chloroethoxy)ethanol": 81773,
+    "hydroxyzine": 3658,
+
+    # Dimenhydrinate
+    "dimenhydrinate": 3047,
+
+    # Desloratadine
+    "methanol": 887,
+    "desloratadine": 124087,
+
+    # Meclizine
+    "m_tolualdehyde": 7410,
+    "meclizine": 4168,
+
+    # Fexofenadine
+    "azacyclonol": 15461,
+    "fexofenadine": 3348,
+
+    # Levocetirizine
+    "levocetirizine": 1549008,
+
+    # Rupatadine
+    "rupatadine": 133124,
+
+    # Solvents
+    "ethanol": 702,
+    "dichloromethane": 6344,
+    "toluene": 1140,
+    "water": 962,
 }
+
 
 @st.cache_data(ttl=86400)
 def get_cid(internal_name: str) -> int | None:
