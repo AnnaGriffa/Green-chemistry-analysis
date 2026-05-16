@@ -14,6 +14,8 @@ st.set_page_config(
 # ── Session state ────────────────────────────────────────────────────────────────
 if "page" not in st.session_state:
     st.session_state.page = "home"
+if "selected_category" not in st.session_state:
+    st.session_state.selected_category = None
 if "selected_reactions" not in st.session_state:
     st.session_state.selected_reactions = []
 
@@ -27,65 +29,136 @@ html, body, [class*="css"] {
     background-color: #0d1117;
     color: #e6edf3;
 }
-.stApp { background-color: #426e4a; }
-.block-container { padding: 2rem 2.5rem 3rem; max-width: 1400px; }
-#MainMenu, footer, header { visibility: hidden; }
+
+.stApp {
+    background-color: #426e4a;
+}
+
+.block-container {
+    padding: 2rem 2.5rem 3rem;
+    max-width: 1400px;
+}
+
+#MainMenu, footer, header {
+    visibility: hidden;
+}
 
 /* HOME */
-.home-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 72vh; text-align: center; padding: 2rem 1rem; }
-.home-icon { font-size: 4rem; margin-bottom: 1.2rem; filter: drop-shadow(0 0 24px rgba(63,185,80,0.4)); }
-.home-title { font-size: 3.4rem; font-weight: 800; color: #ffffff; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 0.8rem; }
-.home-accent { color: #3fb950; }
-.home-subtitle { font-size: 1rem; color: #0b4021; max-width: 460px; line-height: 1.7; margin-bottom: 2.8rem; }
-.home-select-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em; color: #3fb950; font-weight: 700; margin-bottom: 0.4rem; text-align: left; }
-.home-divider { width: 60px; height: 3px; background: linear-gradient(90deg, #3fb950, #238636); border-radius: 999px; margin: 0 auto 2.5rem; }
+.home-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 72vh;
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.home-icon {
+    font-size: 4rem;
+    margin-bottom: 1.2rem;
+}
+
+.home-title {
+    font-size: 3.4rem;
+    font-weight: 800;
+    color: white;
+}
+
+.home-accent {
+    color: #3fb950;
+}
+
+.home-subtitle {
+    font-size: 1rem;
+    color: #cde8d5;
+}
+
+.home-divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #3fb950, #238636);
+    border-radius: 999px;
+    margin: 1rem auto 2rem;
+}
 
 /* ANALYSIS */
-.main-title { font-size: 2.6rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; line-height: 1.1; }
-.title-accent { color: #3fb950; }
-.selection-banner { border-radius: 12px; padding: 0.7rem 1.2rem; font-size: 0.95rem; font-weight: 600; display: inline-block; margin-bottom: 0.5rem; }
+.main-title {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: white;
+}
 
-/* Metric cards */
-.metric-card { border-radius: 16px; padding: 1.2rem 0.8rem; text-align: center; height: 100%; }
-.metric-card.efactor { background: linear-gradient(160deg, #7a6a1e 0%, #5c4f14 100%); border: 1px solid #a08c28; }
-.metric-card.pmi     { background: linear-gradient(160deg, #5a3e7a 0%, #3d2857 100%); border: 1px solid #7b57a8; }
-.metric-card.hazards { background: linear-gradient(160deg, #6e3f3f 0%, #4e2b2b 100%); border: 1px solid #9e5555; }
-.metric-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.75; margin-bottom: 0.3rem; }
-.metric-value { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; color: #ffffff; line-height: 1; margin-bottom: 0.4rem; }
-.metric-comment { font-size: 0.72rem; opacity: 0.7; line-height: 1.4; }
-.metric-badge { display: inline-block; border-radius: 999px; padding: 0.2rem 0.6rem; font-size: 0.65rem; font-weight: 700; margin-top: 0.4rem; letter-spacing: 0.05em; text-transform: uppercase; }
-.badge-good { background: #1a4731; color: #3fb950; }
-.badge-ok   { background: #3d3214; color: #d4a017; }
-.badge-warn { background: #4e1e1e; color: #f85149; }
+.title-accent {
+    color: #3fb950;
+}
 
-/* Hazard list */
-.hazard-list { margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.3rem; text-align: left; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.7rem; }
-.hazard-item { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.72rem; color: rgba(255,255,255,0.75); line-height: 1.3; }
-.hazard-code { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 700; background: rgba(0,0,0,0.3); border-radius: 4px; padding: 0.1rem 0.35rem; white-space: nowrap; color: #ffa657; margin-top: 0.05rem; }
+.selection-banner {
+    border-radius: 12px;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: inline-block;
+}
 
-/* Principles */
-.principles-card { background: linear-gradient(160deg, #1a3d2b 0%, #132d1f 100%); border: 1px solid #2d6a42; border-radius: 16px; padding: 1.2rem 1.4rem; }
-.principles-title { font-size: 0.95rem; font-weight: 700; color: #7ee8a2; margin-bottom: 0.8rem; }
-.principle-item { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.25rem 0; font-size: 0.75rem; color: #cde8d5; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.principle-item:last-child { border-bottom: none; }
-.principle-num { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #3fb950; font-weight: 700; min-width: 1.4rem; margin-top: 1px; }
-.principle-highlighted { color: #7ee8a2; font-weight: 600; }
+/* CATEGORY */
+.category-card {
+    background: linear-gradient(160deg, #1b2a20 0%, #132019 100%);
+    border: 1px solid #2d6a42;
+    border-radius: 18px;
+    padding: 2rem 1rem;
+    text-align: center;
+    min-height: 220px;
+}
 
-/* Equation */
-.equation-card { background: #2e6d7d; border: 1px solid #1e5c6e; border-radius: 16px; padding: 1.4rem 1.2rem 1.6rem; font-family: 'JetBrains Mono', monospace; }
-.equation-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: #d0eef5; margin-bottom: 1rem; font-weight: 600; text-align: center; }
+.category-icon {
+    font-size: 2.8rem;
+    margin-bottom: 0.8rem;
+}
 
-/* Buttons */
-.stButton > button { background: linear-gradient(135deg, #238636, #1a6e2e) !important; color: white !important; border: 1px solid #2ea043 !important; border-radius: 10px !important; font-family: 'Sora', sans-serif !important; font-weight: 700 !important; font-size: 0.9rem !important; padding: 0.6rem 1.6rem !important; letter-spacing: 0.03em !important; transition: all 0.2s ease !important; }
-.stButton > button:hover { background: linear-gradient(135deg, #2ea043, #238636) !important; transform: translateY(-1px) !important; box-shadow: 0 4px 16px rgba(46,160,67,0.3) !important; }
-.stSelectbox > div > div { background-color: #21262d !important; border: 1px solid #30363d !important; border-radius: 10px !important; color: #e6edf3 !important; font-family: 'Sora', sans-serif !important; }
-.stRadio > div { gap: 1rem; }
-.section-divider { border: none; border-top: 1px solid #21262d; margin: 1.5rem 0; }
+.category-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+}
+
+.category-count {
+    font-size: 0.8rem;
+    color: #7ee8a2;
+}
+
+.section-divider {
+    border: none;
+    border-top: 1px solid #21262d;
+    margin: 1.5rem 0;
+}
 </style>
 """, unsafe_allow_html=True)
-
 # ── Data ─────────────────────────────────────────────────────────────────────────
 REACTIONS = load_reactions()
+
+CATEGORY_LABELS = {
+    "nighttime_sleep": "Nighttime Sleep",
+    "seasonal_allergies": "Seasonal Allergies",
+    "cold_flu_symptoms": "Cold & Flu Symptoms",
+    "motion_sickness_nausea": "Motion Sickness & Nausea",
+    "skin_allergies_hives": "Skin Allergies & Hives",
+}
+
+CATEGORY_ICONS = {
+    "nighttime_sleep": "🌙",
+    "seasonal_allergies": "🌼",
+    "cold_flu_symptoms": "🤧",
+    "motion_sickness_nausea": "🚢",
+    "skin_allergies_hives": "🩹",
+}
+
+CATEGORIES = {}
+for name, reaction in REACTIONS.items():
+    cat = reaction.category
+    if cat not in CATEGORIES:
+        CATEGORIES[cat] = []
+    CATEGORIES[cat].append(name)
 
 PRINCIPLES = [
     "Prevention of waste",
@@ -185,52 +258,50 @@ if st.session_state.page == "home":
         <div class="home-title">Green Chemistry<br><span class="home-accent">Analysis Tool</span></div>
         <div class="home-divider"></div>
         <div class="home-subtitle">
-            Select reactions to compare their green chemistry profiles side by side.
+            Select an antihistamine category to begin analysis.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    _, col_center, _ = st.columns([1.2, 2, 1.2])
-    with col_center:
-        reaction_names = list(REACTIONS.keys())
+    categories = list(CATEGORIES.keys())
+    top = st.columns(3)
+    bottom = st.columns(2)
 
-        st.markdown('<div class="home-select-label">Number of reactions to compare</div>', unsafe_allow_html=True)
-        n_reactions = st.radio(
-            "n", [2, 3, 4],
-            horizontal=True,
-            label_visibility="collapsed",
-            key="n_reactions",
-        )
-
-        st.markdown("<div style='height:0.8rem'></div>", unsafe_allow_html=True)
-
-        choices = []
-        for i in range(n_reactions):
-            st.markdown(f'<div class="home-select-label">Reaction {i + 1}</div>', unsafe_allow_html=True)
-            choice = st.selectbox(
-                f"reaction{i}",
-                reaction_names,
-                index=i if i < len(reaction_names) else 0,
-                label_visibility="collapsed",
-                key=f"home_select_{i}",
-            )
-            choices.append(choice)
-            st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
-
-        has_duplicates = len(choices) != len(set(choices))
-        if has_duplicates:
+    for i, cat in enumerate(categories[:3]):
+        with top[i]:
             st.markdown(
-                "<div style='color:#f85149;font-size:0.8rem;text-align:center;'>"
-                "⚠️ Please select different reactions.</div>",
+                f"""
+                <div class="category-card">
+                    <div class="category-icon">{CATEGORY_ICONS[cat]}</div>
+                    <div class="category-title">{CATEGORY_LABELS[cat]}</div>
+                    <div class="category-count">{len(CATEGORIES[cat])} antihistamines</div>
+                </div>
+                """,
                 unsafe_allow_html=True
             )
+            if st.button(f"Choose {CATEGORY_LABELS[cat]}", key=f"cat_{cat}", use_container_width=True):
+                st.session_state.selected_category = cat
+                st.session_state.selected_reactions = []
+                st.session_state.page = "analysis"
+                st.rerun()
 
-        st.markdown("<div style='height:0.4rem'></div>", unsafe_allow_html=True)
-
-        if st.button("🔬 Compare Reactions", use_container_width=True, disabled=has_duplicates):
-            st.session_state.selected_reactions = choices
-            st.session_state.page = "analysis"
-            st.rerun()
+    for i, cat in enumerate(categories[3:]):
+        with bottom[i]:
+            st.markdown(
+                f"""
+                <div class="category-card">
+                    <div class="category-icon">{CATEGORY_ICONS[cat]}</div>
+                    <div class="category-title">{CATEGORY_LABELS[cat]}</div>
+                    <div class="category-count">{len(CATEGORIES[cat])} antihistamines</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            if st.button(f"Choose {CATEGORY_LABELS[cat]}", key=f"cat2_{cat}", use_container_width=True):
+                st.session_state.selected_category = cat
+                st.session_state.selected_reactions = []
+                st.session_state.page = "analysis"
+                st.rerun()
 
     st.markdown("<div style='height:3rem'></div>", unsafe_allow_html=True)
     st.markdown(FOOTER, unsafe_allow_html=True)
@@ -239,10 +310,30 @@ if st.session_state.page == "home":
 # ══════════════════════════════════════════════════════════════════════════════
 # ANALYSIS SCREEN
 # ══════════════════════════════════════════════════════════════════════════════
-selected  = st.session_state.selected_reactions
+if st.session_state.selected_category is None:
+    st.session_state.page = "home"
+    st.rerun()
+
+category = st.session_state.selected_category
+available_reactions = [
+    r for r in CATEGORIES[category]
+    if r not in st.session_state.selected_reactions
+]
+
+if len(st.session_state.selected_reactions) < 4 and available_reactions:
+    chosen = st.selectbox(
+        "Select antihistamine",
+        available_reactions,
+        key="reaction_picker"
+    )
+    if st.button("➕ Add Antihistamine"):
+        st.session_state.selected_reactions.append(chosen)
+        st.rerun()
+
+selected = st.session_state.selected_reactions
 reactions = [REACTIONS[name] for name in selected]
-datas     = [build_data(r) for r in reactions]
-n         = len(reactions)
+datas = [build_data(r) for r in reactions]
+n = len(reactions)
 
 # Header
 st.markdown('<div class="main-title">Green Chemistry <span class="title-accent">Comparison</span></div>', unsafe_allow_html=True)
@@ -250,24 +341,24 @@ st.markdown("<p style='color:#6e7681;font-size:0.85rem;margin-top:0.3rem;'>Side-
 st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
 
 # Colonnes dynamiques
-col_widths = []
-for i in range(n):
-    col_widths.append(10)
-    if i < n - 1:
-        col_widths.append(0.3)
+content_cols = []
 
-cols = st.columns(col_widths, gap="small")
-content_cols = [cols[i * 2] for i in range(n)]
-divider_cols = [cols[i * 2 + 1] for i in range(n - 1)]
+if n == 1:
+    content_cols = [st.container()]
 
-# Séparateurs verticaux
-for col in divider_cols:
-    with col:
-        st.markdown(
-            "<div style='border-left:1px solid #21262d;height:100%;"
-            "min-height:800px;margin:auto;width:1px;'></div>",
-            unsafe_allow_html=True
-        )
+elif n == 2:
+    content_cols = st.columns(2)
+
+elif n == 3:
+    row1 = st.columns(2)
+    row2 = st.columns(1)
+    content_cols = [row1[0], row1[1], row2[0]]
+
+elif n == 4:
+    row1 = st.columns(2)
+    row2 = st.columns(2)
+    content_cols = [row1[0], row1[1], row2[0], row2[1]]
+
 
 # ── Bannières
 for i, (col, reaction) in enumerate(zip(content_cols, reactions)):
@@ -316,9 +407,19 @@ for i, (col, data) in enumerate(zip(content_cols, datas)):
 st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
 st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
 
-if st.button("🔄  Compare Another Set"):
-    st.session_state.page = "home"
-    st.rerun()
+c1, c2 = st.columns(2)
+
+with c1:
+    if st.button("🔄 Change Category"):
+        st.session_state.page = "home"
+        st.session_state.selected_reactions = []
+        st.session_state.selected_category = None
+        st.rerun()
+
+with c2:
+    if st.button("🗑 Clear Analysis"):
+        st.session_state.selected_reactions = []
+        st.rerun()
 
 st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
 st.markdown(FOOTER, unsafe_allow_html=True)
