@@ -1,77 +1,581 @@
 {
   "Diphenhydramine synthesis": {
     "reactants": [
-      { "name": "benzhydrol", "coeff": 1 },
-      { "name": "hydrochloric_acid", "coeff": 1 },
-      { "name": "dimethylaminoethanol", "coeff": 1 }
+      {
+        "name": "benzhydrol",
+        "coeff": 1
+      },
+      {
+        "name": "hydrochloric_acid",
+        "coeff": 1
+      },
+      {
+        "name": "dimethylaminoethanol",
+        "coeff": 1
+      }
     ],
-
     "intermediates": [
-      { "name": "chlorodiphenylmethane", "coeff": 1 }
+      {
+        "name": "chlorodiphenylmethane",
+        "coeff": 1
+      }
     ],
-
     "products": [
-      { "name": "diphenhydramine", "coeff": 1 }
+      {
+        "name": "diphenhydramine",
+        "coeff": 1
+      }
     ],
-
     "solvents": [
-      { "name": "ethanol", "coeff": 1 }
+      {
+        "name": "ethanol",
+        "coeff": 1
+      }
     ],
-
     "yield_percent": 78,
     "temperature": 60,
-    "steps": 2
+    "steps": 2,
+    "category": "nighttime_sleep"
   },
-
   "Cetirizine synthesis": {
     "reactants": [
-      { "name": "4-chlorobenzhydryl_chloride", "coeff": 1 },
-      { "name": "n-carbethoxy_piperazine", "coeff": 1 },
-      { "name": "methyl_2-(2-chloroethoxy)acetate", "coeff": 1 }
+      {
+        "name": "4-chlorobenzhydryl_chloride",
+        "coeff": 1
+      },
+      {
+        "name": "n-carbethoxy_piperazine",
+        "coeff": 1
+      },
+      {
+        "name": "methyl_2-(2-chloroethoxy)acetate",
+        "coeff": 1
+      }
     ],
-
     "intermediates": [
       {
         "name": "ethyl_4-(4-chlorobenzhydryl)piperazine-1-carboxylate",
         "coeff": 1
       }
     ],
-
     "products": [
-      { "name": "cetirizine", "coeff": 1 }
+      {
+        "name": "cetirizine",
+        "coeff": 1
+      }
     ],
-
     "solvents": [
-      { "name": "dichloromethane", "coeff": 1 },
-      { "name": "toluene", "coeff": 1 }
+      {
+        "name": "dichloromethane",
+        "coeff": 1
+      },
+      {
+        "name": "toluene",
+        "coeff": 1
+      }
     ],
-
     "yield_percent": 65,
     "temperature": 95,
-    "steps": 4
+    "steps": 4,
+    "category": "seasonal_allergies"
   },
-
   "Loratadine synthesis": {
     "reactants": [
-      { "name": "2-(3-chlorophenyl)acetonitrile", "coeff": 1 },
-      { "name": "ethyl_nicotinate", "coeff": 1 }
+      {
+        "name": "2-(4-chlorobenzyl)acetonitrile",
+        "coeff": 1
+      },
+      {
+        "name": "ethyl_nicotinate",
+        "coeff": 1
+      }
     ],
-
     "intermediates": [
-      { "name": "loratadine_intermediate", "coeff": 1 }
+      {
+        "name": "loratadine_intermediate",
+        "coeff": 1
+      }
     ],
-
     "products": [
-      { "name": "loratadine", "coeff": 1 }
+      {
+        "name": "loratadine",
+        "coeff": 1
+      }
     ],
-
     "solvents": [
-      { "name": "ethanol", "coeff": 1 }
+      {
+        "name": "ethanol",
+        "coeff": 1
+      }
     ],
-
     "yield_percent": 82,
     "temperature": 70,
-    "steps": 3
+    "steps": 3,
+    "category": "seasonal_allergies"
+  },
+  "Brompheniramine synthesis": {
+    "reactants": [
+      {
+        "name": "2-bromopyridine",
+        "coeff": 1
+      },
+      {
+        "name": "4-bromobenzyl_bromide",
+        "coeff": 1
+      },
+      {
+        "name": "dimethylaminoethyl_chloride",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [
+      {
+        "name": "brompheniramine_intermediate",
+        "coeff": 1
+      }
+    ],
+    "products": [
+      {
+        "name": "brompheniramine",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "toluene",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 68,
+    "temperature": 80,
+    "steps": 3,
+    "category": "cold_flu_symptoms"
+  },
+  "Chlorpheniramine synthesis": {
+    "reactants": [
+      {
+        "name": "4-chlorophenylacetonitrile",
+        "coeff": 1
+      },
+      {
+        "name": "2-chloropyridine",
+        "coeff": 1
+      },
+      {
+        "name": "dimethylaminoethyl_chloride",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [
+      {
+        "name": "chlorpheniramine_intermediate",
+        "coeff": 1
+      }
+    ],
+    "products": [
+      {
+        "name": "chlorpheniramine",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "toluene",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 70,
+    "temperature": 85,
+    "steps": 3,
+    "category": "cold_flu_symptoms"
+  },
+  "Carbinoxamine synthesis": {
+    "reactants": [
+      {
+        "name": "pyridine",
+        "coeff": 1
+      },
+      {
+        "name": "4-chlorophenylacetonitrile",
+        "coeff": 1
+      },
+      {
+        "name": "dimethylaminoethyl_chloride_hcl",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [
+      {
+        "name": "carbinoxamine_alcohol",
+        "coeff": 1
+      }
+    ],
+    "products": [
+      {
+        "name": "carbinoxamine",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "toluene",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 72,
+    "temperature": 50,
+    "steps": 2,
+    "category": "cold_flu_symptoms"
+  },
+  "Triprolidine synthesis": {
+    "reactants": [
+      {
+        "name": "4-methylbenzophenone",
+        "coeff": 1
+      },
+      {
+        "name": "formaldehyde",
+        "coeff": 1
+      },
+      {
+        "name": "pyrrolidine",
+        "coeff": 1
+      },
+      {
+        "name": "2-bromopyridine",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [
+      {
+        "name": "triprolidine_alcohol",
+        "coeff": 1
+      }
+    ],
+    "products": [
+      {
+        "name": "triprolidine",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "toluene",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 60,
+    "temperature": 65,
+    "steps": 3,
+    "category": "cold_flu_symptoms"
+  },
+  "Doxylamine synthesis": {
+    "reactants": [
+      {
+        "name": "methylbenzyl_ketone",
+        "coeff": 1
+      },
+      {
+        "name": "pyridine",
+        "coeff": 1
+      },
+      {
+        "name": "dimethylaminoethyl_chloride",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [
+      {
+        "name": "doxylamine_intermediate",
+        "coeff": 1
+      }
+    ],
+    "products": [
+      {
+        "name": "doxylamine",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "ethanol",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 66,
+    "temperature": 70,
+    "steps": 3,
+    "category": "nighttime_sleep"
+  },
+  "Promethazine synthesis": {
+    "reactants": [
+      {
+        "name": "phenothiazine",
+        "coeff": 1
+      },
+      {
+        "name": "dimethylaminopropyl_chloride",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [],
+    "products": [
+      {
+        "name": "promethazine",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "toluene",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 75,
+    "temperature": 90,
+    "steps": 1,
+    "category": "nighttime_sleep"
+  },
+  "Cyclizine synthesis": {
+    "reactants": [
+      {
+        "name": "benzhydrol",
+        "coeff": 1
+      },
+      {
+        "name": "hydrochloric_acid",
+        "coeff": 1
+      },
+      {
+        "name": "n-methyl_piperazine",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [
+      {
+        "name": "chlorodiphenylmethane",
+        "coeff": 1
+      }
+    ],
+    "products": [
+      {
+        "name": "cyclizine",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "water",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 94,
+    "temperature": 100,
+    "steps": 2,
+    "category": "motion_sickness_nausea"
+  },
+  "Hydroxyzine synthesis": {
+    "reactants": [
+      {
+        "name": "hydroxyzine_precursor",
+        "coeff": 1
+      },
+      {
+        "name": "2-(2-chloroethoxy)ethanol",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [],
+    "products": [
+      {
+        "name": "hydroxyzine",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "ethanol",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 80,
+    "temperature": 60,
+    "steps": 1,
+    "category": "skin_allergies_hives"
+  },
+  "Dimenhydrinate synthesis": {
+    "reactants": [
+      {
+        "name": "diphenhydramine",
+        "coeff": 1
+      },
+      {
+        "name": "diphenhydramine_salt_partner",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [],
+    "products": [
+      {
+        "name": "dimenhydrinate",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "ethanol",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 85,
+    "temperature": 25,
+    "steps": 1,
+    "category": "motion_sickness_nausea"
+  },
+  "Desloratadine synthesis": {
+    "reactants": [
+      {
+        "name": "desloratadine_precursor",
+        "coeff": 1
+      },
+      {
+        "name": "methanol",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [],
+    "products": [
+      {
+        "name": "desloratadine",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "methanol",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 78,
+    "temperature": 25,
+    "steps": 2,
+    "category": "seasonal_allergies"
+  },
+  "Meclizine synthesis": {
+    "reactants": [
+      {
+        "name": "meclizine_precursor",
+        "coeff": 1
+      },
+      {
+        "name": "m_tolualdehyde",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [],
+    "products": [
+      {
+        "name": "meclizine",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "methanol",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 74,
+    "temperature": 40,
+    "steps": 1,
+    "category": "motion_sickness_nausea"
+  },
+  "Fexofenadine synthesis": {
+    "reactants": [
+      {
+        "name": "fexofenadine_intermediate_1",
+        "coeff": 1
+      },
+      {
+        "name": "azacyclonol",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [
+      {
+        "name": "fexofenadine_intermediate_2",
+        "coeff": 1
+      }
+    ],
+    "products": [
+      {
+        "name": "fexofenadine",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "toluene",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 55,
+    "temperature": 70,
+    "steps": 4,
+    "category": "seasonal_allergies"
+  },
+  "Levocetirizine synthesis": {
+    "reactants": [
+      {
+        "name": "cetirizine",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [],
+    "products": [
+      {
+        "name": "levocetirizine",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "ethanol",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 90,
+    "temperature": 25,
+    "steps": 1,
+    "category": "skin_allergies_hives"
+  },
+  "Rupatadine synthesis": {
+    "reactants": [
+      {
+        "name": "desloratadine_acid",
+        "coeff": 1
+      },
+      {
+        "name": "rupatadine_precursor",
+        "coeff": 1
+      }
+    ],
+    "intermediates": [],
+    "products": [
+      {
+        "name": "rupatadine",
+        "coeff": 1
+      }
+    ],
+    "solvents": [
+      {
+        "name": "toluene",
+        "coeff": 1
+      }
+    ],
+    "yield_percent": 62,
+    "temperature": 65,
+    "steps": 2,
+    "category": "skin_allergies_hives"
   }
 }
-  

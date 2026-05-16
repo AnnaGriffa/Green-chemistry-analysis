@@ -17,6 +17,7 @@ class Species:
 @dataclass(frozen=True)
 class Reaction:
     name: str
+    category: str
     reactants: list[Species]
     intermediates: list[Species]
     products: list[Species]
@@ -35,6 +36,7 @@ def load_reactions(path: Path = INPUT_PATH) -> dict[str, Reaction]:
     for name, r in raw.items():
         reactions[name] = Reaction(
             name=name,
+            category=r["category"],
             reactants=[Species(**sp) for sp in r["reactants"]],
             intermediates=[Species(**sp) for sp in r.get("intermediates", [])],
             products=[Species(**sp) for sp in r["products"]],

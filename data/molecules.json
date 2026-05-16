@@ -1,96 +1,394 @@
 {
   "benzhydrol": {
     "molar_mass": 184.24,
-    "ghs_pictograms": ["health"]
+    "ghs_pictograms": [
+      "health"
+    ]
   },
-
   "hydrochloric_acid": {
     "molar_mass": 36.46,
-    "ghs_pictograms": ["corrosive"]
+    "ghs_pictograms": [
+      "corrosive"
+    ]
   },
-
   "chlorodiphenylmethane": {
     "molar_mass": 202.68,
-    "ghs_pictograms": ["health"]
+    "ghs_pictograms": [
+      "health"
+    ]
   },
-
   "dimethylaminoethanol": {
     "molar_mass": 89.14,
-    "ghs_pictograms": ["health"]
+    "ghs_pictograms": [
+      "health"
+    ]
   },
-
   "diphenhydramine": {
     "molar_mass": 255.36,
-    "ghs_pictograms": ["health"]
+    "ghs_pictograms": [
+      "health"
+    ]
   },
-
   "4-chlorobenzhydryl_chloride": {
     "molar_mass": 237.12,
-    "ghs_pictograms": ["health"]
+    "ghs_pictograms": [
+      "health"
+    ]
   },
-
   "n-carbethoxy_piperazine": {
-    "molar_mass": 158.20,
-    "ghs_pictograms": ["health"]
+    "molar_mass": 158.2,
+    "ghs_pictograms": [
+      "health"
+    ]
   },
-
   "ethyl_4-(4-chlorobenzhydryl)piperazine-1-carboxylate": {
-    "molar_mass": 358.90,
-    "ghs_pictograms": ["health"]
+    "molar_mass": 358.9,
+    "ghs_pictograms": [
+      "health"
+    ]
   },
-
   "methyl_2-(2-chloroethoxy)acetate": {
     "molar_mass": 152.58,
-    "ghs_pictograms": ["health"]
+    "ghs_pictograms": [
+      "health"
+    ]
   },
-
   "cetirizine": {
     "molar_mass": 388.89,
-    "ghs_pictograms": ["health", "environment"]
+    "ghs_pictograms": [
+      "health"
+    ]
   },
-
-  "2-(3-chlorophenyl)acetonitrile": {
-    "molar_mass": 151.60,
-    "ghs_pictograms": ["health"]
+  "2-(4-chlorobenzyl)acetonitrile": {
+    "molar_mass": 151.6,
+    "ghs_pictograms": [
+      "health"
+    ]
   },
-
   "ethyl_nicotinate": {
     "molar_mass": 151.16,
-    "ghs_pictograms": ["health"]
+    "ghs_pictograms": [
+      "health"
+    ]
   },
-
   "loratadine_intermediate": {
-    "molar_mass": 280.00,
-    "ghs_pictograms": ["health"]
+    "molar_mass": 280.0,
+    "ghs_pictograms": [
+      "health"
+    ]
   },
-
   "loratadine": {
     "molar_mass": 382.89,
     "ghs_pictograms": []
   },
-
   "ethanol": {
     "molar_mass": 46.07,
-    "ghs_pictograms": ["flammable"]
+    "ghs_pictograms": [
+      "flammable"
+    ]
   },
-
   "dichloromethane": {
     "molar_mass": 84.93,
-    "ghs_pictograms": ["health"]
+    "ghs_pictograms": [
+      "health"
+    ]
   },
-
   "toluene": {
     "molar_mass": 92.14,
-    "ghs_pictograms": ["flammable", "health"]
+    "ghs_pictograms": [
+      "flammable"
+    ]
   },
-
   "sodium_hydroxide": {
-    "molar_mass": 40.00,
-    "ghs_pictograms": ["corrosive"]
+    "molar_mass": 40.0,
+    "ghs_pictograms": [
+      "corrosive"
+    ]
   },
-
   "water": {
     "molar_mass": 18.02,
     "ghs_pictograms": []
+  },
+  "2-bromopyridine": {
+    "molar_mass": 158.0,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "4-bromobenzyl_bromide": {
+    "molar_mass": 249.9,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "brompheniramine_intermediate": {
+    "molar_mass": 277.0,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "dimethylaminoethyl_chloride": {
+    "molar_mass": 107.6,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "brompheniramine": {
+    "molar_mass": 319.3,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "2-chloropyridine": {
+    "molar_mass": 113.5,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "chlorpheniramine_intermediate": {
+    "molar_mass": 233.0,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "chlorpheniramine": {
+    "molar_mass": 274.8,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "4-chlorophenylacetonitrile": {
+    "molar_mass": 151.6,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "carbinoxamine_alcohol": {
+    "molar_mass": 205.7,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "dimethylaminoethyl_chloride_hcl": {
+    "molar_mass": 143.1,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "carbinoxamine": {
+    "molar_mass": 291.8,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "methylbenzyl_ketone": {
+    "molar_mass": 134.2,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "pyridine": {
+    "molar_mass": 79.1,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "triprolidine_alcohol": {
+    "molar_mass": 268.0,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "triprolidine": {
+    "molar_mass": 278.4,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "4-methylbenzophenone": {
+    "molar_mass": 196.2,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "formaldehyde": {
+    "molar_mass": 30.0,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "pyrrolidine": {
+    "molar_mass": 71.1,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "2-bromopyridine_lithium": {
+    "molar_mass": 86.0,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "doxylamine_intermediate": {
+    "molar_mass": 300.0,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "doxylamine": {
+    "molar_mass": 270.4,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "phenothiazine": {
+    "molar_mass": 199.3,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "dimethylaminopropyl_chloride": {
+    "molar_mass": 135.6,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "promethazine": {
+    "molar_mass": 284.4,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "cyclizine": {
+    "molar_mass": 266.4,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "n-methyl_piperazine": {
+    "molar_mass": 100.2,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "hydroxyzine_precursor": {
+    "molar_mass": 286.8,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "2-(2-chloroethoxy)ethanol": {
+    "molar_mass": 124.6,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "hydroxyzine": {
+    "molar_mass": 374.9,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "diphenhydramine_salt_partner": {
+    "molar_mass": 200.0,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "dimenhydrinate": {
+    "molar_mass": 469.0,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "desloratadine_precursor": {
+    "molar_mass": 364.9,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "desloratadine": {
+    "molar_mass": 310.8,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "isopropyl_chloroformate": {
+    "molar_mass": 136.6,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "methanol": {
+    "molar_mass": 32.04,
+    "ghs_pictograms": [
+      "flammable"
+    ]
+  },
+  "meclizine_precursor": {
+    "molar_mass": 287.8,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "m_tolualdehyde": {
+    "molar_mass": 120.1,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "meclizine": {
+    "molar_mass": 390.0,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "fexofenadine_intermediate_1": {
+    "molar_mass": 250.0,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "fexofenadine_intermediate_2": {
+    "molar_mass": 380.0,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "azacyclonol": {
+    "molar_mass": 267.4,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "fexofenadine": {
+    "molar_mass": 501.7,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "levocetirizine": {
+    "molar_mass": 388.89,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "rupatadine_precursor": {
+    "molar_mass": 420.0,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "desloratadine_acid": {
+    "molar_mass": 338.8,
+    "ghs_pictograms": [
+      "health"
+    ]
+  },
+  "rupatadine": {
+    "molar_mass": 415.0,
+    "ghs_pictograms": [
+      "health"
+    ]
   }
 }
