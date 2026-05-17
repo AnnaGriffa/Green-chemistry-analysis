@@ -1,8 +1,11 @@
 import streamlit as st
+import streamlit.components.v1 as components
+
 from data.reactions import load_reactions
 from utils.metrics import e_factor, atom_economy, solvent_toxicity
 from utils.scoring import green_score
 from utils.structures import render_equation
+
 
 # ── Page config ─────────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -132,6 +135,126 @@ html, body, [class*="css"] {
     border-top: 1px solid #21262d;
     margin: 1.5rem 0;
 }
+.comparison-panel {
+    background: linear-gradient(160deg, #161b22 0%, #0d1117 100%);
+    border: 1px solid #30363d;
+    border-radius: 22px;
+    padding: 1.5rem;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    margin-bottom: 1.5rem;
+    transition: all 0.25s ease;
+}
+
+.comparison-panel:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 36px rgba(0,0,0,0.35);
+}
+/* METRIC CARDS */
+.metric-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.metric-vertical {
+    flex: 1;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 1rem;
+    text-align: center;
+    min-height: 360px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.metric-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #dce8df;
+    margin-bottom: 0.5rem;
+}
+
+.metric-number {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.3rem;
+}
+
+.metric-desc {
+    font-size: 0.72rem;
+    color: #8b949e;
+    margin-bottom: 1rem;
+}
+
+.bar-shell {
+    width: 70px;
+    height: 180px;
+    margin: 0 auto;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    position: relative;
+}
+
+.bar-fill {
+    width: 100%;
+    border-radius: 18px;
+    animation: growBar 2s ease forwards;
+    height: 0;
+}
+
+.bar-blue {
+    background: linear-gradient(180deg, #4ea8ff, #1f6feb);
+}
+
+.bar-green {
+    background: linear-gradient(180deg, #7ee787, #238636);
+}
+
+.bar-orange {
+    background: linear-gradient(180deg, #ffd166, #f59e0b);
+}
+
+.metric-badge {
+    margin-top: 1rem;
+    display: inline-block;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.badge-excellent {
+    background: rgba(46,160,67,0.15);
+    color: #7ee787;
+    border: 1px solid rgba(126,231,135,0.3);
+}
+
+.badge-good {
+    background: rgba(78,168,255,0.15);
+    color: #79c0ff;
+    border: 1px solid rgba(121,192,255,0.3);
+}
+
+.badge-moderate {
+    background: rgba(245,158,11,0.15);
+    color: #ffd166;
+    border: 1px solid rgba(255,209,102,0.3);
+}
+
+@keyframes growBar {
+    from {
+        height: 0;
+    }
+    to {
+        height: var(--target-height);
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 # ── Data ─────────────────────────────────────────────────────────────────────────
@@ -185,25 +308,6 @@ FOOTER = """
 
 # ── Fonctions utilitaires ─────────────────────────────────────────────────────────
 
-def render_metric(css_class, label, metric_data):
-    """Affiche une carte métrique — appelée dans le contexte de colonne actif."""
-    hazard_html = ""
-    if "list" in metric_data and metric_data["list"]:
-        items = "".join(
-            f'<div class="hazard-item"><span class="hazard-code">{h["code"]}</span>{h["label"]}</div>'
-            for h in metric_data["list"]
-        )
-        hazard_html = f'<div class="hazard-list">{items}</div>'
-    st.markdown(
-        f'<div class="metric-card {css_class}">'
-        f'<div class="metric-label">{label}</div>'
-        f'<div class="metric-value">{metric_data["value"]}</div>'
-        f'<div class="metric-comment">{metric_data["comment"]}</div>'
-        f'<div class="metric-badge badge-{metric_data["badge"]}">{metric_data["badge_text"]}</div>'
-        f'{hazard_html}</div>',
-        unsafe_allow_html=True
-    )
-
 def build_data(reaction):
     """Construit le dictionnaire de données d'affichage."""
     ef  = e_factor(reaction)
@@ -246,6 +350,159 @@ def render_principles(data):
         f'{items_html}</div>',
         unsafe_allow_html=True
     )
+
+def render_metric_dashboard(data):
+    ef = data["efactor"]["value"]
+    ae = data["pmi"]["value"]
+    hz = data["hazards"]["value"]
+
+    ef_height = min(max((ef / 50) * 100, 5), 100)
+    ae_height = min(max(ae, 5), 100)
+    hz_height = min(max((hz / 5) * 100, 5), 100)
+
+    ef_badge = "Excellent" if ef < 5 else "Good" if ef < 15 else "Needs Improvement"
+    ae_badge = "Excellent" if ae > 70 else "Good" if ae > 40 else "Moderate"
+    hz_badge = "Low Risk" if hz < 1 else "Moderate" if hz < 3 else "High"
+
+    ef_class = "badge-excellent" if ef < 5 else "badge-good" if ef < 15 else "badge-moderate"
+    ae_class = "badge-excellent" if ae > 70 else "badge-good" if ae > 40 else "badge-moderate"
+    hz_class = "badge-excellent" if hz < 1 else "badge-good" if hz < 3 else "badge-moderate"
+
+    html = f"""
+    <style>
+    .metric-grid {{
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 1rem;
+    }}
+
+    .metric-vertical {{
+        flex: 1;
+        background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 20px;
+        padding: 1rem;
+        text-align: center;
+        min-height: 360px;
+        color: white;
+    }}
+
+    .metric-title {{
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }}
+
+    .metric-number {{
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 0.3rem;
+    }}
+
+    .metric-desc {{
+        font-size: 0.72rem;
+        color: #8b949e;
+        margin-bottom: 1rem;
+    }}
+
+    .bar-shell {{
+        width: 70px;
+        height: 180px;
+        margin: 0 auto;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+        display: flex;
+        align-items: flex-end;
+        overflow: hidden;
+    }}
+
+    .bar-fill {{
+        width: 100%;
+        border-radius: 18px;
+        animation: growBar 2s ease forwards;
+        height: 0;
+    }}
+
+    .bar-blue {{
+        background: linear-gradient(180deg, #4ea8ff, #1f6feb);
+    }}
+
+    .bar-green {{
+        background: linear-gradient(180deg, #7ee787, #238636);
+    }}
+
+    .bar-orange {{
+        background: linear-gradient(180deg, #ffd166, #f59e0b);
+    }}
+
+    .metric-badge {{
+        margin-top: 1rem;
+        display: inline-block;
+        padding: 0.4rem 0.9rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }}
+
+    .badge-excellent {{
+        background: rgba(46,160,67,0.15);
+        color: #7ee787;
+    }}
+
+    .badge-good {{
+        background: rgba(78,168,255,0.15);
+        color: #79c0ff;
+    }}
+
+    .badge-moderate {{
+        background: rgba(245,158,11,0.15);
+        color: #ffd166;
+    }}
+
+    @keyframes growBar {{
+        from {{ height: 0; }}
+        to {{ height: var(--target-height); }}
+    }}
+    </style>
+
+    <div class="metric-grid">
+
+        <div class="metric-vertical">
+            <div class="metric-title">🌿 E-Factor</div>
+            <div class="metric-number">{ef}</div>
+            <div class="metric-desc">Waste per unit product</div>
+            <div class="bar-shell">
+                <div class="bar-fill bar-blue" style="--target-height:{ef_height}%"></div>
+            </div>
+            <div class="metric-badge {ef_class}">{ef_badge}</div>
+        </div>
+
+        <div class="metric-vertical">
+            <div class="metric-title">⚛ Atom Economy</div>
+            <div class="metric-number">{ae}%</div>
+            <div class="metric-desc">Mass efficiency indicator</div>
+            <div class="bar-shell">
+                <div class="bar-fill bar-green" style="--target-height:{ae_height}%"></div>
+            </div>
+            <div class="metric-badge {ae_class}">{ae_badge}</div>
+        </div>
+
+        <div class="metric-vertical">
+            <div class="metric-title">⚠ Hazard Score</div>
+            <div class="metric-number">{hz}</div>
+            <div class="metric-desc">Solvent hazard profile</div>
+            <div class="bar-shell">
+                <div class="bar-fill bar-orange" style="--target-height:{hz_height}%"></div>
+            </div>
+            <div class="metric-badge {hz_class}">{hz_badge}</div>
+        </div>
+
+    </div>
+    """
+
+    components.html(html, height=430)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # HOME SCREEN
@@ -360,32 +617,24 @@ elif n == 4:
     content_cols = [row1[0], row1[1], row2[0], row2[1]]
 
 
-# ── Bannières
-for i, (col, reaction) in enumerate(zip(content_cols, reactions)):
+# ── Bannières et métriques
+# ── Bannières et métriques
+for i, (col, reaction, data) in enumerate(zip(content_cols, reactions, datas)):
     with col:
+        st.markdown("<div class='comparison-panel'>", unsafe_allow_html=True)
+
         st.markdown(
-            f"<div class='selection-banner' style='background:linear-gradient(135deg,#1e3a5f,#163356);"
-            f"border:1px solid {COLORS[i]};color:{COLORS[i]};'>"
-            f"🔬 {reaction.name}</div>",
+            f"<div class='selection-banner' "
+            f"style='background:linear-gradient(135deg,#10243d,#0d1b2a);"
+            f"border:1px solid {COLORS[i]};color:{COLORS[i]};"
+            f"padding:0.9rem 1.3rem;font-size:1.05rem;border-radius:16px;'>"
+            f"⚗ {reaction.name}</div>",
             unsafe_allow_html=True
         )
-        st.markdown("<div style='height:0.8rem'></div>", unsafe_allow_html=True)
 
-# ── Métriques
-for i, (col, data) in enumerate(zip(content_cols, datas)):
-    with col:
-        if n <= 2:
-            mc1, mc2, mc3 = st.columns(3)
-            with mc1: render_metric("efactor", "E-Factor", data["efactor"])
-            with mc2: render_metric("pmi",     "PMI",      data["pmi"])
-            with mc3: render_metric("hazards", "Hazards",  data["hazards"])
-        else:
-            render_metric("efactor", "E-Factor", data["efactor"])
-            st.markdown("<div style='height:0.4rem'></div>", unsafe_allow_html=True)
-            render_metric("pmi",     "PMI",      data["pmi"])
-            st.markdown("<div style='height:0.4rem'></div>", unsafe_allow_html=True)
-            render_metric("hazards", "Hazards",  data["hazards"])
-        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
+        render_metric_dashboard(data)
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # ── Equations
 for i, (col, reaction) in enumerate(zip(content_cols, reactions)):
