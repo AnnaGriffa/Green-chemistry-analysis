@@ -8,7 +8,7 @@ import pubchempy as pcp
 PUBCHEM_NAMES: dict[str, str] = {
     # Diphenhydramine
     "benzhydrol": "benzhydrol",
-    "hydrochloric_acid": "hydrochloric acid",
+    "hydrochloric_acid": "hydrochloric_acid",
     "dimethylaminoethanol": "2-dimethylaminoethanol",
     "diphenhydramine": "diphenhydramine",
 
@@ -68,7 +68,7 @@ PUBCHEM_NAMES: dict[str, str] = {
     "dimenhydrinate": "dimenhydrinate",
 
     # Desloratadine
-    "desloratadine_precursor": "loratadine",
+    "desloratadine_precursor": "desloratadine_precursor",
     "methanol": "methanol",
     "desloratadine": "desloratadine",
 
@@ -102,6 +102,7 @@ KNOWN_CIDS: dict[str, int] = {
     "benzhydrol": 7037,
     "hydrochloric_acid": 313,
     "dimethylaminoethanol": 7767,
+    "diphenhydramine_salt_partner": 10797,
     "diphenhydramine": 3989,
 
     # Cetirizine
@@ -159,14 +160,18 @@ KNOWN_CIDS: dict[str, int] = {
 
     # Desloratadine
     "methanol": 887,
+    "desloratadine_precursor": 3957,
     "desloratadine": 124087,
+   
 
     # Meclizine
     "m_tolualdehyde": 7410,
+    "meclizine_precursor": 4837,
     "meclizine": 4168,
 
     # Fexofenadine
     "azacyclonol": 15461,
+    "fexofenadine_intermediate_1": 440929,
     "fexofenadine": 3348,
 
     # Levocetirizine
