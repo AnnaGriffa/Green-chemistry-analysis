@@ -5,6 +5,7 @@ from data.reactions import load_reactions
 from utils.metrics import e_factor, atom_economy, solvent_toxicity
 from utils.scoring import green_score
 from utils.structures import render_equation
+from data.principles import PRINCIPLE_FLAGS
 
 
 # ── Page config ─────────────────────────────────────────────────────────────────
@@ -333,21 +334,113 @@ def build_data(reaction):
             "badge_text": "Low" if st_ < 1 else "Moderate" if st_ < 3 else "High",
             "list":       [],
         },
-        "principles": getattr(reaction, "principles", [0, 1, 4, 5]),
+       "principles": compute_principles(reaction, ef, ae, st_),
     }
 
+def compute_principles(reaction, ef, ae, hz):
+    principles = []
+
+    flags = PRINCIPLE_FLAGS.get(reaction.name, {})
+ 
+    # 1. Prevention of waste
+    if ef < 10:
+        principles.append(0)
+
+    # 2. Atom economy
+    if ae > 50:
+        principles.append(1)
+
+    # 3. Less hazardous syntheses
+    if hz < 1.5:
+        principles.append(2)
+
+    # 4. Designing safer chemicals
+    if hz < 1:
+        principles.append(3)
+
+    # 5. Safer solvents
+    if hz < 2:
+        principles.append(4)
+
+    # 6. Energy efficiency
+    if reaction.temperature <= 60:
+        principles.append(5)
+
+    # 7. Renewable feedstocks
+    if flags.get("renewable_feedstocks", False):
+        principles.append(6)
+
+    # 8. Reduce derivatives
+    if reaction.steps <= 2 and len(reaction.intermediates) <= 1:
+        principles.append(7)
+
+    # 9. Catalysis
+    if flags.get("catalysis", False):
+        principles.append(8)
+
+    # 10. Design for degradation
+    if flags.get("design_for_degradation", False):
+        principles.append(9)
+
+    # 11. Real-time analysis
+    if flags.get("real_time_monitoring", False):
+        principles.append(10)
+
+    # 12. Accident prevention
+    if flags.get("accident_prevention", False):
+        principles.append(11)
+
+    return principles
+
 def render_principles(data):
-    """Affiche le bloc des 12 principes."""
     highlighted = set(data["principles"])
+
     items_html = ""
+
     for i, p in enumerate(PRINCIPLES):
-        css = "principle-highlighted" if i in highlighted else ""
-        dot = "✔️" if i in highlighted else "•"
-        items_html += f'<div class="principle-item"><span class="principle-num">{i+1:02d}</span><span class="{css}">{dot} {p}</span></div>'
+        active = i in highlighted
+
+        bg = "rgba(46,160,67,0.12)" if active else "rgba(255,255,255,0.03)"
+        border = "#3fb950" if active else "rgba(255,255,255,0.06)"
+        color = "#7ee787" if active else "#8b949e"
+        icon = "✓" if active else "○"
+
+        items_html += f"""
+        <div style="
+            padding:0.65rem 0.9rem;
+            margin-bottom:0.45rem;
+            border-radius:14px;
+            background:{bg};
+            border:1px solid {border};
+            color:{color};
+            font-size:0.82rem;
+            font-weight:600;
+        ">
+            {icon} Principle {i+1}: {p}
+        </div>
+        """
+
     st.markdown(
-        f'<div class="principles-card">'
-        f'<div class="principles-title">📋 12 Principles of Green Chemistry</div>'
-        f'{items_html}</div>',
+        f"""
+        <div style="
+            background:linear-gradient(160deg,#161b22 0%, #0d1117 100%);
+            border:1px solid #30363d;
+            border-radius:20px;
+            padding:1.2rem;
+            margin-top:1rem;
+        ">
+            <div style="
+                font-size:1rem;
+                font-weight:800;
+                color:white;
+                margin-bottom:1rem;
+            ">
+                🌿 Green Chemistry Principles
+            </div>
+
+            {items_html}
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
