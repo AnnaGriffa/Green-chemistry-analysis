@@ -7,16 +7,18 @@ from utils.metrics import (
 
 
 def green_score(reaction):
-    score = 100
+    score = 75
 
-    score -= e_factor(reaction) * 5
-    score -= solvent_toxicity(reaction) * 5
-    score -= reaction.steps * 3
-    score -= intermediate_complexity(reaction) * 4
+    score -= e_factor(reaction) * 6
+    score -= solvent_toxicity(reaction) * 8
+    score -= reaction.steps * 5
+    score -= intermediate_complexity(reaction) * 6
 
-    if reaction.temperature > 100:
+    if reaction.temperature > 80:
         score -= 10
+    elif reaction.temperature > 50:
+        score -= 5
 
-    score += atom_economy(reaction) * 0.2
+    score += atom_economy(reaction) * 0.15
 
     return round(max(0, min(score, 100)), 2)
