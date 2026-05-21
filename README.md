@@ -24,56 +24,56 @@ This usage example shows how to quickly leverage the package's main functionalit
 After importing the `main_func` (to be renamed by you), you simply pass in your `data` and get the `result` (this is just an example, your package might have other inputs and outputs). 
 Short and sweet, but the real power lies in the detailed documentation.
 
-## 👩‍💻 Installation
+# 🌿 Green Chemistry Dashboard
 
-Create a new environment, you may also give the environment a different name. 
+An interactive student project for comparing antihistamine synthesis pathways from a green chemistry perspective.
 
-```
-conda create -n green_chemistry_analysis python=3.10 
-```
+## Project Overview
 
-```
-conda activate green_chemistry_analysis
-(conda_env) $ pip install .
-```
+This project evaluates and compares the environmental sustainability of different antihistamine synthesis routes using quantitative green chemistry indicators and qualitative principle-based assessment.
 
-If you need jupyter lab, install it 
+The analysis includes:
 
-```
-(green_chemistry_analysis) $ pip install jupyterlab
-```
+- **E-Factor** — waste generated relative to product mass
+- **PMI (Process Mass Intensity)** — overall material consumption
+- **Atom Economy** — efficiency of reactant incorporation into the final product
+- **Solvent Hazard Assessment** — based on GHS hazard classifications
+- **Global Green Score** — comparative sustainability score
+- **Green Chemistry Principle Evaluation** — qualitative compliance assessment
 
+The application provides an interactive dashboard for visual comparison of synthesis pathways.
 
-## 🛠️ Development installation
+---
 
-Initialize Git (only for the first time). 
+## Features
 
-Note: You should have create an empty repository on `https://github.com:Elsachev/green_chemistry_analysis`.
+- Interactive Streamlit dashboard
+- Comparison of multiple antihistamine synthesis routes
+- Sustainability metric computation
+- Global comparative Green Score
+- Simplified chemical reaction visualization
+- Green chemistry principle evaluation
+- Molecular visualization using PubChem data
 
-```
-git init
-git add * 
-git add .*
-git commit -m "Initial commit" 
-git branch -M main
-git remote add origin git@github.com:Elsachev/green_chemistry_analysis.git 
-git push -u origin main
-```
+---
 
-Then add and commit changes as usual. 
+## Project Structure
 
-To install the package, run
-
-```
-(green_chemistry_analysis) $ pip install -e ".[test,doc]"
-```
-
-### Run tests and coverage
-
-```
-(conda_env) $ pip install tox
-(conda_env) $ tox
-```
+```text
+.
+├── app.py                  # Main Streamlit application
+├── data/
+│   ├── reactions.json      # Reaction dataset
+│   ├── molecules.json      # Molecular property dataset
+│   ├── reactions.py        # Reaction data loading module
+│   └── molecules.py        # Molecular data loading module
+│
+├── utils/
+│   ├── metrics.py          # Sustainability metric calculations
+│   └── scoring.py          # Green score computation
+│
+├── notebooks/              # Jupyter notebooks and project report
+└── README.md
 
 
 
