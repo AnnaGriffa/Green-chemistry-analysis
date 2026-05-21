@@ -173,7 +173,7 @@ html, body, [class*="css"] {
 .metric-title {
     font-size: 0.85rem;
     font-weight: 700;
-    color: #dce8df;
+    color: #f0f6fc;
     margin-bottom: 0.5rem;
 }
 
@@ -185,7 +185,7 @@ html, body, [class*="css"] {
 
 .metric-desc {
     font-size: 0.72rem;
-    color: #8b949e;
+    color: #d0d7de;
     margin-bottom: 1rem;
 }
 
@@ -256,6 +256,45 @@ html, body, [class*="css"] {
         height: var(--target-height);
     }
 }
+
+.metric-desc {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #d0d7de !important;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+}
+
+.metric-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #f0f6fc !important;
+    margin-bottom: 0.5rem;
+}
+
+.bar-pink {
+    background: linear-gradient(180deg, #f778ba, #db61a2);
+}
+
+.score-card {
+    border: 2px solid rgba(247, 120, 186, 0.45) !important;
+    box-shadow: 0 0 20px rgba(247, 120, 186, 0.18);
+}
+
+.badge-score {
+    background: rgba(247, 120, 186, 0.18);
+    color: #ffd1e8;
+    border: 1px solid rgba(247, 120, 186, 0.4);
+}
+
+.metric-number {
+    font-size: 2.15rem;
+    font-weight: 800;
+    margin-bottom: 0.3rem;
+    color: white !important;
+}        
+
 </style>
 """, unsafe_allow_html=True)
 # ── Data ─────────────────────────────────────────────────────────────────────────
@@ -314,14 +353,21 @@ def build_data(reaction):
     ef  = e_factor(reaction)
     ae  = atom_economy(reaction)
     st_ = solvent_toxicity(reaction)
+    score = green_score(reaction)
     return {
+        "score": {
+            "value": score,
+            "comment": "Overall sustainability score",
+            "badge": "good" if score > 75 else "ok" if score > 50 else "warn",
+            "badge_text": "Excellent" if score > 75 else "Moderate" if score > 50 else "Poor"
+        },
         "efactor": {
             "value":      round(ef, 2),
             "comment":    "Waste per unit product",
             "badge":      "good" if ef < 5 else "ok" if ef < 15 else "warn",
             "badge_text": "Excellent" if ef < 5 else "Moderate" if ef < 15 else "Poor",
         },
-        "pmi": {
+        "atom_economy": {
             "value":      round(ae, 2),
             "comment":    "Mass efficiency indicator",
             "badge":      "good" if ae > 70 else "ok" if ae > 40 else "warn",
@@ -446,125 +492,176 @@ def render_principles(data):
 
 def render_metric_dashboard(data):
     ef = data["efactor"]["value"]
-    ae = data["pmi"]["value"]
+    ae = data["atom_economy"]["value"]
     hz = data["hazards"]["value"]
+    score = data["score"]["value"]
 
     ef_height = min(max((ef / 50) * 100, 5), 100)
     ae_height = min(max(ae, 5), 100)
     hz_height = min(max((hz / 5) * 100, 5), 100)
+    score_height = score
 
     ef_badge = "Excellent" if ef < 5 else "Good" if ef < 15 else "Needs Improvement"
     ae_badge = "Excellent" if ae > 70 else "Good" if ae > 40 else "Moderate"
     hz_badge = "Low Risk" if hz < 1 else "Moderate" if hz < 3 else "High"
+    score_badge = "Excellent" if score > 75 else "Good" if score > 50 else "Moderate"
 
     ef_class = "badge-excellent" if ef < 5 else "badge-good" if ef < 15 else "badge-moderate"
     ae_class = "badge-excellent" if ae > 70 else "badge-good" if ae > 40 else "badge-moderate"
     hz_class = "badge-excellent" if hz < 1 else "badge-good" if hz < 3 else "badge-moderate"
+    score_class = "badge-score"
 
     html = f"""
-    <style>
-    .metric-grid {{
-        display: flex;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-top: 1rem;
-    }}
+<style>
+.metric-grid {{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+}}
 
-    .metric-vertical {{
-        flex: 1;
-        background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 20px;
-        padding: 1rem;
-        text-align: center;
-        min-height: 360px;
-        color: white;
-    }}
+.metric-vertical {{
+    flex: 1;
+    min-width: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 1rem;
+    text-align: center;
+    min-height: 360px;
+    color: white;
+}}
 
-    .metric-title {{
-        font-size: 0.85rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }}
+.score-card {{
+    border: 2px solid rgba(247,120,186,0.55);
+    box-shadow: 0 0 22px rgba(247,120,186,0.18);
+}}
 
-    .metric-number {{
-        font-size: 2rem;
-        font-weight: 800;
-        margin-bottom: 0.3rem;
-    }}
+.metric-title {{
+    font-size: 1rem;
+    font-weight: 800;
+    color: #f0f6fc;
+    margin-bottom: 0.55rem;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}}
 
-    .metric-desc {{
-        font-size: 0.72rem;
-        color: #8b949e;
-        margin-bottom: 1rem;
-    }}
+.metric-number {{
+    font-size: 2.15rem;
+    font-weight: 800;
+    margin-bottom: 0.3rem;
+    color: white;
+}}
 
-    .bar-shell {{
-        width: 70px;
-        height: 180px;
-        margin: 0 auto;
-        border-radius: 18px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.08);
-        display: flex;
-        align-items: flex-end;
-        overflow: hidden;
-    }}
+.metric-desc {{
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #d0d7de;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}}
 
-    .bar-fill {{
-        width: 100%;
-        border-radius: 18px;
-        animation: growBar 2s ease forwards;
-        height: 0;
-    }}
+.bar-shell {{
+    width: 70px;
+    height: 180px;
+    margin: 0 auto;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}}
 
-    .bar-blue {{
-        background: linear-gradient(180deg, #4ea8ff, #1f6feb);
-    }}
+.bar-fill {{
+    width: 100%;
+    border-radius: 18px;
+    animation: growBar 2s ease forwards;
+    height: 0;
+}}
 
-    .bar-green {{
-        background: linear-gradient(180deg, #7ee787, #238636);
-    }}
+.bar-blue {{
+    background: linear-gradient(180deg, #4ea8ff, #1f6feb);
+}}
 
-    .bar-orange {{
-        background: linear-gradient(180deg, #ffd166, #f59e0b);
-    }}
+.bar-green {{
+    background: linear-gradient(180deg, #7ee787, #238636);
+}}
 
-    .metric-badge {{
-        margin-top: 1rem;
-        display: inline-block;
-        padding: 0.4rem 0.9rem;
-        border-radius: 999px;
-        font-size: 0.72rem;
-        font-weight: 700;
-    }}
+.bar-orange {{
+    background: linear-gradient(180deg, #ffd166, #f59e0b);
+}}
 
-    .badge-excellent {{
-        background: rgba(46,160,67,0.15);
-        color: #7ee787;
-    }}
+.bar-pink {{
+    background: linear-gradient(180deg, #f778ba, #db61a2);
+}}
 
-    .badge-good {{
-        background: rgba(78,168,255,0.15);
-        color: #79c0ff;
-    }}
+.metric-badge {{
+    margin-top: 1rem;
+    display: inline-block;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+}}
 
-    .badge-moderate {{
-        background: rgba(245,158,11,0.15);
-        color: #ffd166;
-    }}
+.badge-excellent {{
+    background: rgba(46,160,67,0.15);
+    color: #7ee787;
+}}
 
-    @keyframes growBar {{
-        from {{ height: 0; }}
-        to {{ height: var(--target-height); }}
-    }}
-    </style>
+.badge-good {{
+    background: rgba(78,168,255,0.15);
+    color: #79c0ff;
+}}
 
+.badge-moderate {{
+    background: rgba(245,158,11,0.15);
+    color: #ffd166;
+}}
+
+.badge-score {{
+    background: rgba(247,120,186,0.18);
+    color: #ffd1e8;
+    border: 1px solid rgba(247,120,186,0.35);
+}}
+
+@keyframes growBar {{
+    from {{ height: 0; }}
+    to {{ height: var(--target-height); }}
+}}
+
+.metric-blue {{
+    color: #79c0ff;
+}}
+
+.metric-green {{
+    color: #7ee787;
+}}
+
+.metric-orange {{
+    color: #ffd166;
+}}
+
+.metric-pink {{
+    color: #f778ba;
+}}
+</style>
+
+<div class="metric-grid">
+    
     <div class="metric-grid">
 
         <div class="metric-vertical">
             <div class="metric-title">🌿 E-Factor</div>
-            <div class="metric-number">{ef}</div>
+            <div class="metric-number metric-blue">{ef}</div>
             <div class="metric-desc">Waste per unit product</div>
             <div class="bar-shell">
                 <div class="bar-fill bar-blue" style="--target-height:{ef_height}%"></div>
@@ -574,7 +671,7 @@ def render_metric_dashboard(data):
 
         <div class="metric-vertical">
             <div class="metric-title">⚛ Atom Economy</div>
-            <div class="metric-number">{ae}%</div>
+            <div class="metric-number metric-green">{ae}%</div>
             <div class="metric-desc">Mass efficiency indicator</div>
             <div class="bar-shell">
                 <div class="bar-fill bar-green" style="--target-height:{ae_height}%"></div>
@@ -584,7 +681,7 @@ def render_metric_dashboard(data):
 
         <div class="metric-vertical">
             <div class="metric-title">⚠ Hazard Score</div>
-            <div class="metric-number">{hz}</div>
+            <div class="metric-number metric-orange">{hz}</div>
             <div class="metric-desc">Solvent hazard profile</div>
             <div class="bar-shell">
                 <div class="bar-fill bar-orange" style="--target-height:{hz_height}%"></div>
@@ -592,10 +689,20 @@ def render_metric_dashboard(data):
             <div class="metric-badge {hz_class}">{hz_badge}</div>
         </div>
 
+        <div class="metric-vertical score-card"> 
+            <div class="metric-title">🏆 Green Score</div>
+            <div class="metric-number metric-pink">{score}</div>
+            <div class="metric-desc">Overall sustainability score</div>
+            <div class="bar-shell">
+               <div class="bar-fill bar-pink" style="--target-height:{score_height}%"></div>
+            </div>
+            <div class="metric-badge {score_class}">{score_badge}</div>
+        </div>
+
     </div>
     """
 
-    components.html(html, height=430)
+    components.html(html, height=500)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # HOME SCREEN
