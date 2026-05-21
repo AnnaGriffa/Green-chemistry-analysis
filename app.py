@@ -1,11 +1,14 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import math
 
 from data.reactions import load_reactions
 from utils.metrics import e_factor, atom_economy, solvent_toxicity
 from utils.scoring import green_score
+from utils.compare import rank_reactions
 from utils.structures import render_equation
 from data.principles import PRINCIPLE_FLAGS
+
 
 
 # ── Page config ─────────────────────────────────────────────────────────────────
@@ -136,16 +139,16 @@ html, body, [class*="css"] {
     border-top: 1px solid #21262d;
     margin: 1.5rem 0;
 }
-.comparison-panel {
-    background: linear-gradient(160deg, #161b22 0%, #0d1117 100%);
-    border: 1px solid #30363d;
-    border-radius: 22px;
-    padding: 1.5rem;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-    margin-bottom: 1.5rem;
-    transition: all 0.25s ease;
-}
 
+.comparison-panel {
+    background: transparent;
+    border: none;
+    border-radius: 22px;
+    padding: 0;
+    box-shadow: none;
+    margin-bottom: 1.5rem;
+    transition: none;
+}
 .comparison-panel:hover {
     transform: translateY(-3px);
     box-shadow: 0 18px 36px rgba(0,0,0,0.35);
@@ -278,22 +281,105 @@ html, body, [class*="css"] {
 }
 
 .score-card {
-    border: 2px solid rgba(247, 120, 186, 0.45) !important;
-    box-shadow: 0 0 20px rgba(247, 120, 186, 0.18);
+    background: linear-gradient(
+        135deg,
+        rgba(247,120,186,0.18),
+        rgba(255,255,255,0.03)
+    ) !important;
+
+    border: 2.5px solid #f778ba !important;
+
+    box-shadow:
+        0 0 35px rgba(247,120,186,0.45),
+        inset 0 0 20px rgba(247,120,186,0.12);
+
+    border-radius: 20px;
+    transform: scale(1.03);
 }
 
 .badge-score {
-    background: rgba(247, 120, 186, 0.18);
-    color: #ffd1e8;
-    border: 1px solid rgba(247, 120, 186, 0.4);
+    background: rgba(247,120,186,0.22);
+    color: #ffd6ea;
+    border: 1px solid rgba(247,120,186,0.55);
+    box-shadow: 0 0 12px rgba(247,120,186,0.2);
 }
-
+            
 .metric-number {
     font-size: 2.15rem;
     font-weight: 800;
     margin-bottom: 0.3rem;
     color: white !important;
 }        
+
+.ranking-panel {
+    background: linear-gradient(
+        135deg,
+        rgba(247,120,186,0.12),
+        rgba(255,255,255,0.03)
+    );
+
+    border: 2px solid #f778ba;
+
+    border-radius: 24px;
+    padding: 1.6rem;
+    margin: 1.2rem 0 2rem 0;
+
+    box-shadow:
+        0 0 35px rgba(247,120,186,0.35),
+        inset 0 0 20px rgba(247,120,186,0.08);
+}            
+
+.ranking-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.ranking-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 0.65rem;
+    font-size: 0.95rem;
+    color: #d0d7de;
+}
+
+.ranking-score {
+    color: #f778ba;
+    font-weight: 800;
+}
+/* CHEMICAL EQUATION */
+.equation-box {
+    background: linear-gradient(
+        135deg,
+        rgba(19,50,28,0.95),
+        rgba(35,90,50,0.65)
+    );
+    border: 1.5px solid rgba(126,231,135,0.45);
+    border-radius: 24px;
+    padding: 1.4rem;
+    margin-top: 1rem;
+    box-shadow:
+        0 12px 30px rgba(0,0,0,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.equation-box img,
+.equation-box svg {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+    margin: 0 auto;
+}
+
+.equation-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 1rem;
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -469,8 +555,9 @@ def render_principles(data):
     st.markdown(
         f"""
         <div style="
-            background:linear-gradient(160deg,#161b22 0%, #0d1117 100%);
-            border:1px solid #30363d;
+            background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border:1px solid rgba(255,255,255,0.08);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
             border-radius:20px;
             padding:1.2rem;
             margin-top:1rem;
@@ -490,6 +577,7 @@ def render_principles(data):
         unsafe_allow_html=True
     )
 
+ 
 def render_metric_dashboard(data):
     ef = data["efactor"]["value"]
     ae = data["atom_economy"]["value"]
@@ -499,7 +587,7 @@ def render_metric_dashboard(data):
     ef_height = min(max((ef / 50) * 100, 5), 100)
     ae_height = min(max(ae, 5), 100)
     hz_height = min(max((hz / 5) * 100, 5), 100)
-    score_height = score
+    score_height = min(max(score, 5), 100)
 
     ef_badge = "Excellent" if ef < 5 else "Good" if ef < 15 else "Needs Improvement"
     ae_badge = "Excellent" if ae > 70 else "Good" if ae > 40 else "Moderate"
@@ -509,154 +597,143 @@ def render_metric_dashboard(data):
     ef_class = "badge-excellent" if ef < 5 else "badge-good" if ef < 15 else "badge-moderate"
     ae_class = "badge-excellent" if ae > 70 else "badge-good" if ae > 40 else "badge-moderate"
     hz_class = "badge-excellent" if hz < 1 else "badge-good" if hz < 3 else "badge-moderate"
-    score_class = "badge-score"
 
     html = f"""
-<style>
-.metric-grid {{
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 1rem;
-}}
+    <style>
+    html, body {{
+        margin: 0;
+        padding: 0;
+        background: transparent !important;
+        overflow: hidden;
+    }}
 
-.metric-vertical {{
-    flex: 1;
-    min-width: 0;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 20px;
-    padding: 1rem;
-    text-align: center;
-    min-height: 360px;
-    color: white;
-}}
+    .metric-grid {{
+        display: flex;
+        gap: 1rem;
+        width: 100%;
+        padding: 0.5rem;
+        box-sizing: border-box;
+    }}
 
-.score-card {{
-    border: 2px solid rgba(247,120,186,0.55);
-    box-shadow: 0 0 22px rgba(247,120,186,0.18);
-}}
+    .metric-vertical {{
+        flex: 1;
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 20px;
+        padding: 1rem;
+        text-align: center;
+        min-height: 360px;
+        color: white;
+        box-sizing: border-box;
+    }}
 
-.metric-title {{
-    font-size: 1rem;
-    font-weight: 800;
-    color: #f0f6fc;
-    margin-bottom: 0.55rem;
-    min-height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}}
+    .score-card {{
+        background: linear-gradient(
+            135deg,
+            rgba(247,120,186,0.18),
+            rgba(255,255,255,0.03)
+        );
+        border: 2px solid #f778ba;
+        box-shadow:
+            0 0 35px rgba(247,120,186,0.45),
+            inset 0 0 20px rgba(247,120,186,0.12);
+        transform: scale(1.02);
+    }}
 
-.metric-number {{
-    font-size: 2.15rem;
-    font-weight: 800;
-    margin-bottom: 0.3rem;
-    color: white;
-}}
+    .metric-title {{
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.5rem;
+    }}
 
-.metric-desc {{
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #d0d7de;
-    margin-bottom: 1rem;
-    line-height: 1.3;
-    min-height: 58px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}}
+    .metric-number {{
+        font-size: 2.15rem;
+        font-weight: 800;
+        margin-bottom: 0.4rem;
+    }}
 
-.bar-shell {{
-    width: 70px;
-    height: 180px;
-    margin: 0 auto;
-    border-radius: 18px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    display: flex;
-    align-items: flex-end;
-    overflow: hidden;
-}}
+    .metric-blue {{ color: #79c0ff; }}
+    .metric-green {{ color: #7ee787; }}
+    .metric-orange {{ color: #ffd166; }}
 
-.bar-fill {{
-    width: 100%;
-    border-radius: 18px;
-    animation: growBar 2s ease forwards;
-    height: 0;
-}}
+    .metric-pink {{
+        color: #ff8ec8;
+        text-shadow:
+            0 0 10px rgba(247,120,186,0.45),
+            0 0 20px rgba(247,120,186,0.25);
+    }}
 
-.bar-blue {{
-    background: linear-gradient(180deg, #4ea8ff, #1f6feb);
-}}
+    .metric-desc {{
+        font-size: 0.85rem;
+        color: #d0d7de;
+        min-height: 50px;
+        line-height: 1.3;
+    }}
 
-.bar-green {{
-    background: linear-gradient(180deg, #7ee787, #238636);
-}}
+    .bar-shell {{
+        width: 70px;
+        height: 180px;
+        margin: 1rem auto;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+        display: flex;
+        align-items: flex-end;
+        overflow: hidden;
+    }}
 
-.bar-orange {{
-    background: linear-gradient(180deg, #ffd166, #f59e0b);
-}}
+    .bar-fill {{
+        width: 100%;
+        height: 0;
+        border-radius: 18px;
+        animation: growBar 1.8s ease forwards;
+    }}
 
-.bar-pink {{
-    background: linear-gradient(180deg, #f778ba, #db61a2);
-}}
+    .bar-blue {{ background: linear-gradient(180deg,#4ea8ff,#1f6feb); }}
+    .bar-green {{ background: linear-gradient(180deg,#7ee787,#238636); }}
+    .bar-orange {{ background: linear-gradient(180deg,#ffd166,#f59e0b); }}
+    .bar-pink {{ background: linear-gradient(180deg,#f778ba,#db61a2); }}
 
-.metric-badge {{
-    margin-top: 1rem;
-    display: inline-block;
-    padding: 0.4rem 0.9rem;
-    border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 700;
-}}
+    .metric-badge {{
+        margin-top: 1rem;
+        display: inline-block;
+        padding: 0.4rem 0.9rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }}
 
-.badge-excellent {{
-    background: rgba(46,160,67,0.15);
-    color: #7ee787;
-}}
+    .badge-excellent {{
+        background: rgba(46,160,67,0.15);
+        color:#7ee787;
+        border:1px solid rgba(126,231,135,0.3);
+    }}
 
-.badge-good {{
-    background: rgba(78,168,255,0.15);
-    color: #79c0ff;
-}}
+    .badge-good {{
+        background: rgba(78,168,255,0.15);
+        color:#79c0ff;
+        border:1px solid rgba(121,192,255,0.3);
+    }}
 
-.badge-moderate {{
-    background: rgba(245,158,11,0.15);
-    color: #ffd166;
-}}
+    .badge-moderate {{
+        background: rgba(245,158,11,0.15);
+        color:#ffd166;
+        border:1px solid rgba(255,209,102,0.3);
+    }}
 
-.badge-score {{
-    background: rgba(247,120,186,0.18);
-    color: #ffd1e8;
-    border: 1px solid rgba(247,120,186,0.35);
-}}
+    .badge-score {{
+        background: rgba(247,120,186,0.22);
+        color:#ffd6ea;
+        border:1px solid rgba(247,120,186,0.55);
+    }}
 
-@keyframes growBar {{
-    from {{ height: 0; }}
-    to {{ height: var(--target-height); }}
-}}
+    @keyframes growBar {{
+        from {{ height: 0; }}
+        to {{ height: var(--target-height); }}
+    }}
+    </style>
 
-.metric-blue {{
-    color: #79c0ff;
-}}
-
-.metric-green {{
-    color: #7ee787;
-}}
-
-.metric-orange {{
-    color: #ffd166;
-}}
-
-.metric-pink {{
-    color: #f778ba;
-}}
-</style>
-
-<div class="metric-grid">
-    
     <div class="metric-grid">
 
         <div class="metric-vertical">
@@ -689,21 +766,20 @@ def render_metric_dashboard(data):
             <div class="metric-badge {hz_class}">{hz_badge}</div>
         </div>
 
-        <div class="metric-vertical score-card"> 
+        <div class="metric-vertical score-card">
             <div class="metric-title">🏆 Green Score</div>
             <div class="metric-number metric-pink">{score}</div>
             <div class="metric-desc">Overall sustainability score</div>
             <div class="bar-shell">
-               <div class="bar-fill bar-pink" style="--target-height:{score_height}%"></div>
+                <div class="bar-fill bar-pink" style="--target-height:{score_height}%"></div>
             </div>
-            <div class="metric-badge {score_class}">{score_badge}</div>
+            <div class="metric-badge badge-score">{score_badge}</div>
         </div>
 
     </div>
     """
 
-    components.html(html, height=500)
-
+    components.html(html, height=470, scrolling=False) 
 # ══════════════════════════════════════════════════════════════════════════════
 # HOME SCREEN
 # ══════════════════════════════════════════════════════════════════════════════
@@ -792,10 +868,52 @@ reactions = [REACTIONS[name] for name in selected]
 datas = [build_data(r) for r in reactions]
 n = len(reactions)
 
+
 # Header
 st.markdown('<div class="main-title">Green Chemistry <span class="title-accent">Comparison</span></div>', unsafe_allow_html=True)
-st.markdown("<p style='color:#6e7681;font-size:0.85rem;margin-top:0.3rem;'>Side-by-side green chemistry analysis</p>", unsafe_allow_html=True)
+st.markdown(
+"<p style='color:#d0d7de;font-size:1rem;margin-top:0.35rem;font-weight:500;'>"
+    "Compare multiple antihistamine synthesis pathways side by side"
+    "</p>",
+    unsafe_allow_html=True
+)
 st.markdown("<hr class='section-divider'>", unsafe_allow_html=True)
+
+if n > 1:
+    ranking = rank_reactions(reactions)
+
+    ranking_html = ""
+
+    medals = ["🥇", "🥈", "🥉", "🏅"]
+
+    for i, item in enumerate(ranking):
+        ranking_html += f"""
+        <div class='ranking-item'>
+            {medals[i]} <strong>{item['name']}</strong>
+            — Green Score:
+            <span style="
+                color:#ff8ec8;
+                font-weight:900;
+                text-shadow:0 0 12px rgba(247,120,186,0.45);
+                padding:0.2rem 0.55rem;
+                border:1px solid rgba(247,120,186,0.45);
+                border-radius:999px;
+                background:rgba(247,120,186,0.08);
+            ">
+                {item['score']}
+            </span>
+        </div>
+        """
+
+    st.markdown(
+        f"""
+        <div class='ranking-panel'>
+            <div class='ranking-title'>🏆 Overall Sustainability Ranking</div>
+            {ranking_html}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 # Colonnes dynamiques
 content_cols = []
@@ -818,7 +936,6 @@ elif n == 4:
 
 
 # ── Bannières et métriques
-# ── Bannières et métriques
 for i, (col, reaction, data) in enumerate(zip(content_cols, reactions, datas)):
     with col:
         st.markdown("<div class='comparison-panel'>", unsafe_allow_html=True)
@@ -836,17 +953,58 @@ for i, (col, reaction, data) in enumerate(zip(content_cols, reactions, datas)):
 
         st.markdown("</div>", unsafe_allow_html=True)
 
+
 # ── Equations
 for i, (col, reaction) in enumerate(zip(content_cols, reactions)):
     with col:
-        st.markdown(
-            "<div class='equation-card'>"
-            "<div class='equation-title'>Chemical Equation</div>",
-            unsafe_allow_html=True
+        equation_html = render_equation(reaction)
+
+        total_species = len(reaction.reactants) + len(reaction.products)
+        rows = math.ceil(total_species / 3)
+        eq_height = 180 + rows * 120
+
+        st.components.v1.html(
+            f"""
+            <html>
+            <body style="
+                margin:0;
+                padding:0;
+                background:transparent;
+                overflow:hidden;
+                font-family:Arial,sans-serif;
+            ">
+
+            <div style="
+                background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+                border:1px solid rgba(255,255,255,0.08);
+                box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+                border-radius:20px;
+                padding:1.2rem;
+                width:100%;
+                box-sizing:border-box;
+            ">
+
+                <div style="
+                    font-size:1rem;
+                    font-weight:800;
+                    color:white;
+                    margin-bottom:1rem;
+                ">
+                    🧪 Chemical Equation
+                </div>
+
+                {equation_html}
+
+            </div>
+
+            </body>
+            </html>
+            """,
+            height=eq_height,
+            scrolling=False
         )
-        render_equation(reaction)
-        st.markdown("</div>", unsafe_allow_html=True)
-        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
+
+        st.markdown("<div style='height:1rem;'></div>", unsafe_allow_html=True)
 
 # ── Principes
 for i, (col, data) in enumerate(zip(content_cols, datas)):

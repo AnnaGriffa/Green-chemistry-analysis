@@ -1,13 +1,10 @@
-from data.reactions import load_reactions
 from utils.scoring import green_score
 
 
-def rank_reactions():
-    reactions = load_reactions()
-
+def rank_reactions(reactions):
     ranking = []
 
-    for reaction in reactions.values():
+    for reaction in reactions:
         ranking.append(
             {
                 "name": reaction.name,

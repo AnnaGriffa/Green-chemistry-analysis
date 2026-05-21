@@ -8,7 +8,7 @@ import pubchempy as pcp
 PUBCHEM_NAMES: dict[str, str] = {
     # Diphenhydramine
     "benzhydrol": "benzhydrol",
-    "hydrochloric_acid": "hydrochloric_acid",
+    "hydrochloric_acid": "hydrochloric acid",
     "dimethylaminoethanol": "2-dimethylaminoethanol",
     "diphenhydramine": "diphenhydramine",
 
@@ -59,7 +59,7 @@ PUBCHEM_NAMES: dict[str, str] = {
     "cyclizine": "cyclizine",
 
     # Hydroxyzine
-    "hydroxyzine_precursor": "cetirizine",
+    "hydroxyzine_precursor": "hydroxyzine",
     "2-(2-chloroethoxy)ethanol": "2-(2-chloroethoxy)ethanol",
     "hydroxyzine": "hydroxyzine",
 
@@ -68,7 +68,7 @@ PUBCHEM_NAMES: dict[str, str] = {
     "dimenhydrinate": "dimenhydrinate",
 
     # Desloratadine
-    "desloratadine_precursor": "desloratadine_precursor",
+    "desloratadine_precursor": "desloratadine",
     "methanol": "methanol",
     "desloratadine": "desloratadine",
 
@@ -99,7 +99,7 @@ PUBCHEM_NAMES: dict[str, str] = {
 
 KNOWN_CIDS: dict[str, int] = {
     # Diphenhydramine
-    "benzhydrol": 7037,
+    "benzhydrol": 7508,
     "hydrochloric_acid": 313,
     "dimethylaminoethanol": 7767,
     "diphenhydramine_salt_partner": 10797,
@@ -170,7 +170,7 @@ KNOWN_CIDS: dict[str, int] = {
     "meclizine": 4168,
 
     # Fexofenadine
-    "azacyclonol": 15461,
+    "azacyclonol": 68247,
     "fexofenadine_intermediate_1": 440929,
     "fexofenadine": 3348,
 
@@ -191,7 +191,7 @@ KNOWN_CIDS: dict[str, int] = {
 @st.cache_data(ttl=86400)
 def get_cid(internal_name: str) -> int | None:
     # 1. Vérifier d'abord les CID hardcodés — toujours fiable
-    if internal_name in KNOWN_CIDS:
+    if internal_name in KNOWN_CIDS and KNOWN_CIDS[internal_name]:
         return KNOWN_CIDS[internal_name]
     # 2. Fallback : chercher via l'API PubChem
     pubchem_name = PUBCHEM_NAMES.get(internal_name, internal_name.replace("_", " "))
@@ -235,10 +235,10 @@ def build_equation_elements(reactants: list[str], products: list[str]) -> list[d
     return elements
 
 
-def render_equation(reaction) -> None:
+def render_equation(reaction) -> str:
     """
-    Affiche l'équation chimique avec les structures PNG de PubChem.
-    Utilise du HTML/CSS flexbox pour éviter les colonnes imbriquées Streamlit.
+    Original working rendering logic, only adapted to return HTML
+    for the equation box in app.py.
     """
     elements = build_equation_elements(
         [sp.name for sp in reaction.reactants],
@@ -246,33 +246,33 @@ def render_equation(reaction) -> None:
     )
 
     items_html = ""
+
     for el in elements:
         if el["type"] == "symbol":
             color = "#3fb950" if el["text"] == "→" else "#6e7681"
+
             items_html += (
                 f'<div style="display:flex;align-items:center;'
                 f'font-size:1.6rem;color:{color};font-weight:700;'
                 f'padding:0 0.3rem;">{el["text"]}</div>'
             )
+
         else:
             name_color = "#79c0ff" if el["role"] == "reactant" else "#7ee8a2"
-            display_name = el["name"].replace("_", " ").replace("-", "‑")
+            display_name = el["name"].replace("_", " ").replace("-", "-")
             url = get_structure_url(el["name"])
 
             if url:
                 img_html = (
                     f'<img src="{url}" style="width:100px;height:100px;'
                     f'object-fit:contain;border-radius:8px;'
-                    f'background:#f0f0f0;padding:6px;'  # ← fond gris clair
+                    f'background:#f0f0f0;padding:6px;'
                     f'border:1px solid #ddd;"/>'
                 )
-                
             else:
                 img_html = (
-                    '<div style="width:100px;height:100px;background:#21262d;'
-                    'border-radius:8px;display:flex;align-items:center;'
-                    'justify-content:center;color:#6e7681;font-size:0.7rem;">'
-                    '⚠️ not found</div>'
+                    '<div style="width:100px;height:100px;background:#f0f0f0;'
+                    'border-radius:8px;border:1px solid #ddd;"></div>'
                 )
 
             items_html += (
@@ -285,9 +285,8 @@ def render_equation(reaction) -> None:
                 f'</div>'
             )
 
-    st.markdown(
+    return (
         f'<div style="display:flex;flex-wrap:wrap;align-items:center;'
         f'justify-content:center;gap:0.5rem;padding:0.5rem 0;">'
-        f'{items_html}</div>',
-        unsafe_allow_html=True,
+        f'{items_html}</div>'
     )
