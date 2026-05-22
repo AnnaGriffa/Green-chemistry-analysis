@@ -1,6 +1,5 @@
-![Project Logo](assets/banner.png)
+![Project Logo](notebooks/interface1.jpg)
 
----
 
 <h1 align="center"> Green Chemistry Analyse Tool</h1>
 
@@ -19,7 +18,7 @@
 
 This project consists of the development of an interactive and visual tool designed to familiarize the audience with green chemistry and raise awareness of the need to make chemical synthesis more sustainable in terms of environmental impact, safety, yield, and resource efficiency.
 
-It calculates key indicators such as atom economy, E-factor, and the number of hazardous solvents for a range of antihistamine synthesis pathways.
+It calculates key indicators such as **atom economy**, **E-factor**, and the **number of hazardous solvents** for a range of antihistamine synthesis pathways.
 
 ## Original Outputs
 
@@ -75,13 +74,17 @@ After installation, here is an overview of the repository structure:
 │   ├── reactions.json      # Reaction dataset
 │   ├── molecules.json      # Molecular property dataset
 │   ├── reactions.py        # Reaction data loading module
-│   └── molecules.py        # Molecular data loading module
+│   ├── molecules.py        # Molecular data loading module
+│   └── principles.py
 │
 ├── utils/
 │   ├── metrics.py          # Sustainability metric calculations
+│   ├── structures.py
+│   ├── compare.py
 │   └── scoring.py          # Green score computation
 │
 ├── notebooks/              # Jupyter notebooks and project report
+│  └── report
 └── README.md
 
 ```
@@ -99,10 +102,10 @@ This project was developed in an educational context as part of a Bachelor’s p
 
 **Authors:**
  
-- Anna Griffa  
-- Elsa Chevalier 
-- Antoine Tran  
-- Thomas Clément  
+- [Anna Griffa](https://github.com/AnnaGriffa)  
+- [Elsa Chevalier](https://github.com/Elsachev)
+- [Antoine Tran](https://github.com/a-tran07)
+- [Thomas Clément](https://github.com/Thomas-X-Clement)
 
 **Aknowledgment:**
 
