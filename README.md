@@ -1,7 +1,7 @@
 ![Project Logo](pictures/interface_image.jpg)
 
 
-<h1 align="center"> Green Chemistry Analyse Tool</h1>
+<h1 align="center"> Green Chemistry Analysis Tool</h1>
 
 ---
 
