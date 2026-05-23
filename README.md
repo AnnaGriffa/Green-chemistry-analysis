@@ -1,4 +1,4 @@
-![Project Logo](notebooks/interface1.jpg)
+![Project Logo](pictures/interface_image.jpg)
 
 
 <h1 align="center"> Green Chemistry Analyse Tool</h1>
@@ -59,6 +59,12 @@ Install the package:
 ```bash
 pip install .
 ```
+Install the required dependencies:
+```bash
+pip install pubchempy
+pip install streamlit
+```
+
 Optionally, install JupyterLab to explore the notebooks:
 ```bash
 pip install jupyterlab
