@@ -87,7 +87,7 @@
       },
       {
         "name": "ethyl_nicotinate",
-        "coeff": 1
+        "coeff": 3
       }
     ],
     "intermediates": [
@@ -407,7 +407,7 @@
     "reactants": [
       {
         "name": "diphenhydramine",
-        "coeff": 1
+        "coeff": 1.2
       },
       {
         "name": "diphenhydramine_salt_partner",
