@@ -43,7 +43,7 @@ displays:
 - Quantitative sustainability indicators 
 - A simplified visual representation of the synthesis pathway
 - A qualitative evaluation of the 12 Green Chemistry Principles
-- A Ranking of the antihistamine synthesis based on the greenscore
+- A Ranking of the antihistamine synthesis based on the Green score
 
 The interface was designed to provide immediate visual feedback and remain 
 accessible to users without familiarity with the underlying code.
