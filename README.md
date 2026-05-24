@@ -25,9 +25,9 @@ It calculates key indicators such as **atom economy**, **E-factor**, and the **n
 These indicators were developed specifically for this project 
 and are not established industry standards:
 
-- **Green Score:** a proposed composite metric combining traditional 
+- **Green Score 🏆:** a proposed composite metric combining traditional 
   indicators with other quantitative characteristics of each pathway.
-- **12 Principles Assessment:** a custom evaluation of each pathway's 
+- **12 Principles Assessment :** a custom evaluation of each pathway's 
   compliance with the 12 principles of green chemistry.
 
 ## Usage ⚖️
