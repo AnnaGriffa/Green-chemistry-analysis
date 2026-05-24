@@ -8,7 +8,7 @@ import pubchempy as pcp
 PUBCHEM_NAMES: dict[str, str] = {
     # Diphenhydramine
     "benzhydrol": "benzhydrol",
-    "hydrochloric_acid": "hydrochloric acid",
+    "hydrochloric_acid": "hydrochloric_acid",
     "dimethylaminoethanol": "2-dimethylaminoethanol",
     "diphenhydramine": "diphenhydramine",
 
@@ -73,7 +73,7 @@ PUBCHEM_NAMES: dict[str, str] = {
     "desloratadine": "desloratadine",
 
     # Meclizine
-    "meclizine_precursor": "piperazine",
+    "meclizine_precursor": "meclizine_precursor",
     "m_tolualdehyde": "m-tolualdehyde",
     "meclizine": "meclizine",
 
@@ -108,7 +108,7 @@ KNOWN_CIDS: dict[str, int] = {
     # Cetirizine
     "4-chlorobenzhydryl_chloride": 12673,
     "n-carbethoxy_piperazine": 68141,
-    "methyl_2-(2-chloroethoxy)acetate": 522258,
+    "methyl_2-(2-chloroethoxy)acetate": 15337474,
     "cetirizine": 2678,
 
     # Loratadine
@@ -117,9 +117,9 @@ KNOWN_CIDS: dict[str, int] = {
     "loratadine": 3957,
 
     # Brompheniramine
-    "2-bromopyridine": 7969,
+    "2-bromopyridine": 7973,
     "4-bromobenzyl_bromide": 78017,
-    "dimethylaminoethyl_chloride": 10966,
+    "dimethylaminoethyl_chloride": 11636816,
     "brompheniramine": 2559,
 
     # Chlorpheniramine
@@ -140,7 +140,7 @@ KNOWN_CIDS: dict[str, int] = {
 
     # Doxylamine
     "methylbenzyl_ketone": 7678,
-    "doxylamine": 8113,
+    "doxylamine": 3162,
 
     # Promethazine
     "phenothiazine": 4760,
@@ -170,8 +170,8 @@ KNOWN_CIDS: dict[str, int] = {
     "meclizine": 4168,
 
     # Fexofenadine
-    "azacyclonol": 68247,
-    "fexofenadine_intermediate_1": 440929,
+    "azacyclonol": 15723,
+    "fexofenadine_intermediate_1": 78680,
     "fexofenadine": 3348,
 
     # Levocetirizine

@@ -1,7 +1,9 @@
+# ============================================================================
+# Imports
+# ============================================================================
 import streamlit as st
 import streamlit.components.v1 as components
 import math
-
 from data.reactions import load_reactions
 from utils.metrics import e_factor, atom_economy, solvent_toxicity
 from utils.scoring import green_score
@@ -10,15 +12,18 @@ from utils.structures import render_equation
 from data.principles import PRINCIPLE_FLAGS
 
 
-
-# ── Page config ─────────────────────────────────────────────────────────────────
+# ============================================================================
+# Page configuration
+# ============================================================================
 st.set_page_config(
     page_title="Green Chemistry Analysis",
     page_icon="🌿",
     layout="wide",
 )
 
-# ── Session state ────────────────────────────────────────────────────────────────
+# ============================================================================
+# Session state
+# ============================================================================
 if "page" not in st.session_state:
     st.session_state.page = "home"
 if "selected_category" not in st.session_state:
@@ -26,7 +31,10 @@ if "selected_category" not in st.session_state:
 if "selected_reactions" not in st.session_state:
     st.session_state.selected_reactions = []
 
-# ── Custom CSS ───────────────────────────────────────────────────────────────────
+
+# ============================================================================
+# Custom CSS
+# ============================================================================
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -383,7 +391,10 @@ html, body, [class*="css"] {
 
 </style>
 """, unsafe_allow_html=True)
-# ── Data ─────────────────────────────────────────────────────────────────────────
+
+# ============================================================================
+# Data
+# ============================================================================
 REACTIONS = load_reactions()
 
 CATEGORY_LABELS = {
@@ -432,10 +443,11 @@ FOOTER = """
 </div>
 """
 
-# ── Fonctions utilitaires ─────────────────────────────────────────────────────────
-
+# ============================================================================
+# Utility functions
+# ============================================================================
 def build_data(reaction):
-    """Construit le dictionnaire de données d'affichage."""
+    """Build dashboard display data."""
     ef  = e_factor(reaction)
     ae  = atom_economy(reaction)
     st_ = solvent_toxicity(reaction)
@@ -780,6 +792,8 @@ def render_metric_dashboard(data):
     """
 
     components.html(html, height=470, scrolling=False) 
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # HOME SCREEN
 # ══════════════════════════════════════════════════════════════════════════════
@@ -840,6 +854,7 @@ if st.session_state.page == "home":
     st.markdown(FOOTER, unsafe_allow_html=True)
     st.stop()
 
+
 # ══════════════════════════════════════════════════════════════════════════════
 # ANALYSIS SCREEN
 # ══════════════════════════════════════════════════════════════════════════════
@@ -869,7 +884,9 @@ datas = [build_data(r) for r in reactions]
 n = len(reactions)
 
 
+# ============================================================================
 # Header
+# ============================================================================
 st.markdown('<div class="main-title">Green Chemistry <span class="title-accent">Comparison</span></div>', unsafe_allow_html=True)
 st.markdown(
 "<p style='color:#d0d7de;font-size:1rem;margin-top:0.35rem;font-weight:500;'>"
@@ -915,7 +932,10 @@ if n > 1:
         unsafe_allow_html=True
     )
 
-# Colonnes dynamiques
+
+# ============================================================================
+# Dynamic layout
+# ============================================================================
 content_cols = []
 
 if n == 1:
@@ -935,7 +955,9 @@ elif n == 4:
     content_cols = [row1[0], row1[1], row2[0], row2[1]]
 
 
-# ── Bannières et métriques
+# ============================================================================
+# Metrics dashboard
+# ============================================================================
 for i, (col, reaction, data) in enumerate(zip(content_cols, reactions, datas)):
     with col:
         st.markdown("<div class='comparison-panel'>", unsafe_allow_html=True)
@@ -954,13 +976,16 @@ for i, (col, reaction, data) in enumerate(zip(content_cols, reactions, datas)):
         st.markdown("</div>", unsafe_allow_html=True)
 
 
-# ── Equations
+
+# ============================================================================
+# Chemical equations
+# ============================================================================
 for i, (col, reaction) in enumerate(zip(content_cols, reactions)):
     with col:
         equation_html = render_equation(reaction)
 
         total_species = len(reaction.reactants) + len(reaction.products)
-        rows = math.ceil(total_species / 3)
+        rows = math.ceil(total_species / 4)
         eq_height = 180 + rows * 120
 
         st.components.v1.html(
@@ -1006,7 +1031,10 @@ for i, (col, reaction) in enumerate(zip(content_cols, reactions)):
 
         st.markdown("<div style='height:1rem;'></div>", unsafe_allow_html=True)
 
-# ── Principes
+
+# ============================================================================
+# Green chemistry principles
+# ============================================================================
 for i, (col, data) in enumerate(zip(content_cols, datas)):
     with col:
         render_principles(data)
