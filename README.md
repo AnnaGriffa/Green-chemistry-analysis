@@ -80,17 +80,17 @@ After installation, here is an overview of the repository structure:
 │   ├── molecules.json      # Molecular property dataset
 │   ├── reactions.py        # Reaction data loading module
 │   ├── molecules.py        # Molecular data loading module
-│   └── principles.py
+│   └── principles.py       # Prin
 │
 ├── utils/
 │   ├── metrics.py          # Sustainability metric calculations
-│   ├── structures.py
-│   ├── compare.py
+│   ├── structures.py       # Molecular structure retrieval
+│   ├── compare.py          # Reaction ranking and comparison functions
 │   └── scoring.py          # Green score computation
 │
 ├── notebooks/              # Jupyter notebooks and project report
 │  └── report
-└── README.md
+└── README.md               # Project documentation and usage instructions
 
 ```
 
